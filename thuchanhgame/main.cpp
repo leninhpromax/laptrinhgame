@@ -1,87 +1,121 @@
-#include <windows.h>
-#include <string>
+/* Mã nguồn này được bản quyền bởi Lazy Foo' Productions 2004-2024
+   và không được phân phối lại mà không có sự cho phép bằng văn bản. */
+
+// Sử dụng SDL và standard IO
 #include <SDL.h>
-#include <SDL_image.h>
+#include <stdio.h>
 
-using namespace std;
+// Hằng số kích thước màn hình
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
-const int SCREEN_WIDTH = 1600;
-const int SCREEN_HIGHT = 800;
-const int SCREEN_BPP = 32;
+// Khởi tạo SDL và tạo cửa sổ
+bool init();
 
-SDL_Surface *g_screen = NULL;
-SDL_Surface *g_bkground = NULL;
-SDL_Event g_even;
+// Tải media
+bool loadMedia();
 
-bool Init()
+// Giải phóng media và đóng SDL
+void close();
+
+// Cửa sổ mà chúng ta sẽ vẽ lên
+SDL_Window* gWindow = NULL;
+
+// Bề mặt được chứa bởi cửa sổ
+SDL_Surface* gScreenSurface = NULL;
+
+// Hình ảnh chúng ta sẽ tải và hiển thị trên màn hình
+SDL_Surface* gHelloWorld = NULL;
+
+bool init()
 {
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
-  {
-    return false;
-  }
-  g_screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
-  if (g_screen == NULL)
-  {
-    return false;
-  }
-  return true;
+	// Cờ khởi tạo
+	bool success = true;
+
+	// Khởi tạo SDL
+	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+	{
+		printf( "SDL không thể khởi tạo! SDL_Lỗi: %s\n", SDL_GetError() );
+		success = false;
+	}
+	else
+	{
+		// Tạo cửa sổ
+		gWindow = SDL_CreateWindow( "Hướng dẫn SDL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( gWindow == NULL )
+		{
+			printf( "Cửa sổ không thể tạo! SDL_Lỗi: %s\n", SDL_GetError() );
+			success = false;
+		}
+		else
+		{
+			// Lấy bề mặt của cửa sổ
+			gScreenSurface = SDL_GetWindowSurface( gWindow );
+		}
+	}
+
+	return success;
 }
 
-SDL_Surface* LoadImage(std::string file_path)
+bool loadMedia()
 {
-  SDL_Surface * load_image = NULL;
-  SDL_Surface* optimize_image = NULL;
-  load_image = IMG_Load(file_path.c_str());
-  if (load_image != NULL)
-  {
-    optimize_image= SDL_DisplayFormat(load_image);
-    SDL_FreeSurface(load_image);
-  }
-  return optimize_image;
+	// Cờ tải thành công
+	bool success = true;
+
+	// Tải hình ảnh
+	gHelloWorld = SDL_LoadBMP( "bg2 (1).png" );
+	if( gHelloWorld == NULL )
+	{
+		printf( "Không thể tải hình ảnh %s! SDL Lỗi: %s\n", "bg2 (1).png", SDL_GetError() );
+		success = false;
+	}
+
+	return success;
 }
 
-void ApplySurface(SDL_Surface* src, SDL_Surface* des, int x, int y)
+void close()
 {
-  SDL_Rect offset;
-  offset.x = x;
-  offset.y = y;
-  SDL_BlitSurface(src, NULL, des, &offset);
+	// Giải phóng bề mặt
+	SDL_FreeSurface( gHelloWorld );
+	gHelloWorld = NULL;
+
+	// Hủy cửa sổ
+	SDL_DestroyWindow( gWindow );
+	gWindow = NULL;
+
+	// Kết thúc các hệ thống SDL
+	SDL_Quit();
 }
 
-void CleanUp()
+int main( int argc, char* args[] )
 {
-  SDL_FreeSurface(g_screen);
-  SDL_FreeSurface(g_bkground);
-}
+	// Khởi động SDL và tạo cửa sổ
+	if( !init() )
+	{
+		printf( "Khởi động thất bại!\n" );
+	}
+	else
+	{
+		// Tải media
+		if( !loadMedia() )
+		{
+			printf( "Tải media thất bại!\n" );
+		}
+		else
+		{
+			// Áp dụng hình ảnh
+			SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
 
-int main(int arc, char* argv[])
-{
-  bool is_quit = false;
-  if (Init() == false)
-   return 0;
+			// Cập nhật bề mặt
+			SDL_UpdateWindowSurface( gWindow );
 
-  g_bkground = LoadImage("bkground.png");
-  if (g_bkground == NULL)
-  {
-    return 0;
-  }
+            // Hack để giữ cửa sổ mở
+            SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true; } }
+		}
+	}
 
-  ApplySurface(g_bkground, g_screen, 0, 0);
+	// Giải phóng tài nguyên và đóng SDL
+	close();
 
-  while (!is_quit)
-  {
-    while (SDL_PollEvent(&g_even))
-    {
-      if (g_even.type == SDL_QUIT)
-      {
-        is_quit = true;
-        break;
-      }
-    }
-    if ( SDL_Flip(g_screen) == -1)
-    return 0;
-  }
-  CleanUp();
-  SDL_Quit();
-  return 1;
+	return 0;
 }
