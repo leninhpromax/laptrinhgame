@@ -1,8 +1,7 @@
-#include <iostream>
+#include <bits/stdc++.h>
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <bits/stdc++.h>
 
 using namespace std;
 
