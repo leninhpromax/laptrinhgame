@@ -1,7 +1,8 @@
-#include <bits/stdc++.h>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -466,8 +467,9 @@ int main() {
     // Lặp lại cho đến khi người chơi đạt được điểm đích hoặc không còn nước đi nào
     while (playerRow != endRow || playerCol != endCol) {
         // In ra mê cung với vị trí đích
+        system("cls");
         PrintMazeWithDestination(endRow, endCol);
-        
+
         // In ra tổng điểm, số lần có thể phá tường và số lần đi qua khu vực ẩn
         cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << endl;
 
@@ -477,7 +479,7 @@ int main() {
 
     // In ra mê cung một lần nữa sau khi người chơi đã đạt được điểm đích
     PrintMazeWithDestination(endRow, endCol);
-    
+
     // In ra tổng điểm, số lần có thể phá tường và số lần đi qua khu vực ẩn
     cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << endl;
 
