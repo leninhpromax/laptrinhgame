@@ -2,15 +2,15 @@
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <bits/stdc++.h>
+#include <utility>
+#include <ctime>
+#include <cstdlib>
 
-using namespace std;
+const int ROWS = 50; // Số hàng của mê cung
+const int COLUMNS = 50; // Số cột của mê cung
+const int WALL_RATIO = 5; // Tạo ra tường có độ dài ngắn nhất là 5 ô
 
-const int ROWS = 30; // Số hàng của mê cung
-const int COLUMNS = 30; // Số cột của mê cung
-const int WALL_RATIO = 5; // Tỷ lệ ô tường
-
-vector<vector<int>> maze(ROWS, vector<int>(COLUMNS, 0)); // Mảng lưu trữ mê cung
+std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0)); // Mảng lưu trữ mê cung
 
 // Tạo mê cung ban đầu
 void CreateMaze() {
@@ -23,88 +23,90 @@ void CreateMaze() {
 
 // Tạo tường ngẫu nhiên trong mê cung
 void GenerateRandomWalls() {
-    // Khởi tạo thiết bị tạo số ngẫu nhiên
-    random_device rd;
+  // Khởi tạo thiết bị tạo số ngẫu nhiên
+  std::random_device rd;
 
-    // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister
-    mt19937 gen(rd());
+  // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister
+  std::mt19937 gen(rd());
 
-    // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
-    uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
+  // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
+  std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
 
-    // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
-    int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 75;
+  // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
+  int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 75;
 
-    // Đảm bảo ít nhất một ô tường được tạo ra
-    numWalls = max(numWalls, 1);
+  // Đảm bảo ít nhất một ô tường được tạo ra
+  numWalls = std::max(numWalls, 1);
 
-    // Số lượng ô tường đã được tạo
-    int wallCount = 0;
+  // Số lượng ô tường đã được tạo
+  int wallCount = 0;
 
-    // Lặp lại để tạo các ô tường ngẫu nhiên
-    while (wallCount < numWalls) {
-        // Tạo chỉ số ngẫu nhiên trong phạm vi mảng
-        int index = dist(gen);
+  // Lặp lại để tạo các ô tường ngẫu nhiên
+  while (wallCount < numWalls) {
+    // Tạo chỉ số ngẫu nhiên trong phạm vi mảng
+    int index = dist(gen);
 
-        // Tính vị trí hàng và cột từ chỉ số
-        int row = index / COLUMNS;
-        int column = index % COLUMNS;
+    // Tính vị trí hàng và cột từ chỉ số
+    int row = index / COLUMNS;
+    int column = index % COLUMNS;
 
-        // Kiểm tra ô hợp lệ (trống và nằm trong giới hạn mê cung)
-        if (maze[row][column] == 1 && row > 0 && row < ROWS - 1 && column > 0 && column < COLUMNS - 1) {
-            // Chọn hướng ngẫu nhiên (ngang = 0, dọc = 1)
-            int direction = gen() % 2;
+    // Kiểm tra ô hợp lệ (trống và nằm trong giới hạn mê cung)
+    if (maze[row][column] == 1 && row > 0 && row < ROWS - 1 && column > 0 && column < COLUMNS - 1) {
+      // Chọn hướng ngẫu nhiên (ngang = 0, dọc = 1)
+      int direction = gen() % 2;
 
-            // Độ dài ban đầu của ô tường
-            int wall_length = 1;
+      // Độ dài ban đầu của ô tường
+      int wall_length = 1;
 
-            // Kiểm tra giới hạn trước khi vào vòng lặp để mở rộng ô tường
-            if (direction == 0) { // Ngang
-                if (column + 5 >= COLUMNS)
-                    continue;
-            } else { // Dọc
-                if (row + 5 >= ROWS)
-                    continue;
-            }
-
-            // Biến cờ xác định vị trí đặt hợp lệ
-            bool valid_placement = true;
-
-            // Lặp lại để mở rộng ô tường cho đến khi đạt độ dài tối đa hoặc gặp chướng ngại vật
-            while (wall_length < 5 && valid_placement) {
-                // Xác định hướng mở rộng
-                if (direction == 0) { // Ngang
-                    // Kiểm tra ô tiếp theo
-                    if (maze[row][column + wall_length] != 1) {
-                        valid_placement = false;
-                    } else {
-                        wall_length++;
-                    }
-                } else { // Dọc
-                    // Kiểm tra ô tiếp theo
-                    if (maze[row + wall_length][column] != 1) {
-                        valid_placement = false;
-                    } else {
-                        wall_length++;
-                    }
-                }
-            }
-
-            // Tạo ô tường hợp lệ
-            if (valid_placement) {
-                // Lặp lại để đặt các ô theo chiều dài ô tường
-                for (int j = 0; j < wall_length; j++) {
-                    // Xác định vị trí đặt theo hướng
-                    if (direction == 0) {
-                        maze[row][column + j] = 0;
-                    } else {
-                        maze[row + j][column] = 0;
-                    }
-                }
-                wallCount++; // Tăng số lượng ô tường đã tạo
-            }
+      // Kiểm tra giới hạn trước khi vào vòng lặp để mở rộng ô tường
+      if (direction == 0) { // Ngang
+        if (column + wall_length >= COLUMNS) {
+          continue;
         }
+      } else { // Dọc
+        if (row + wall_length >= ROWS) {
+          continue;
+        }
+      }
+
+      // Biến cờ xác định vị trí đặt hợp lệ
+      bool valid_placement = true;
+
+      // Lặp lại để mở rộng ô tường cho đến khi đạt độ dài tối đa hoặc gặp chướng ngại vật
+      while (wall_length < 5 && valid_placement) {
+        // Xác định hướng mở rộng
+        if (direction == 0) { // Ngang
+          // Kiểm tra ô tiếp theo
+          if (maze[row][column + wall_length] != 1) {
+            valid_placement = false;
+          } else {
+            wall_length++;
+          }
+        } else { // Dọc
+          // Kiểm tra ô tiếp theo
+          if (maze[row + wall_length][column] != 1) {
+            valid_placement = false;
+          } else {
+            wall_length++;
+          }
+        }
+      }
+
+      // Tạo ô tường hợp lệ
+      if (valid_placement) {
+        // Lặp lại để đặt các ô theo chiều dài ô tường
+        for (int j = 0; j < wall_length; j++) {
+          // Xác định vị trí đặt theo hướng
+          if (direction == 0) {
+            maze[row][column + j] = 0;
+          } else {
+            maze[row + j][column] = 0;
+          }
+        }
+        wallCount++; // Tăng số lượng ô tường đã tạo
+      }
     }
+  }
 }
 
 // Tìm vị trí các ô có điểm thưởng
@@ -162,7 +164,7 @@ void FindRewards() {
 }
 
 // Sửa lỗi mê cung
-void FixMazeerror() {
+void FixMazeError() {
     int i = 1;
     int j = 1;
     for (int di = 0; di <= 3; di++) {
@@ -184,13 +186,13 @@ void BreakWalls() {
                 if (maze[i][j + 1] == 0 || maze[i][j - 1] == 0) {
                     count = 1;
                 }
-                if (count == 0) {
+                if (count == 0 || count == 2) {
                     maze[i][j] = 4;
                 } else {
                     if (maze[i + 1][j] == 0 || maze[i - 1][j] == 0) {
                         count = 2;
                     }
-                    if (count == 1) {
+                    if (count == 1 || count == 3) {
                         maze[i][j] = 4;
                     }
                 }
@@ -229,27 +231,27 @@ void PrintMazeWithDestination(int endRow, int endCol) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (i == endRow && j == endCol) {
-                    cout << "D" << " "; // In ra vị trí của điểm đích
+                    std::cout << "D" << " "; // In ra vị trí của điểm đích
                 } else if (maze[i][j] == 0) {
-                    cout << "#" << " "; // Ô có tường
+                    std::cout << "#" << " "; // Ô có tường
                 } else if (maze[i][j] == 1) {
-                    cout << "." << " "; // Ô trống
+                    std::cout << "." << " "; // Ô trống
                 } else if (maze[i][j] == 2) {
-                    cout << "x" << " "; // Điểm thưởng
+                    std::cout << "x" << " "; // Điểm thưởng
                 } else if (maze[i][j] == 3) {
-                    cout << "?" << " "; // Nơi ẩn
+                    std::cout << "?" << " "; // Nơi ẩn
                 } else if (maze[i][j] == 4) {
-                    cout << "0" << " "; // Cổng bí mật
+                    std::cout << "0" << " "; // Cổng bí mật
                 } else {
-                    cout << "*" << " "; // Vị trí người chơi
+                    std::cout << "*" << " "; // Vị trí người chơi
                 }
             }
-            cout << endl;
+            std::cout << std::endl;
         }
 
         // In ra tổng số lượng rewards và hiddens trong mê cung
-        cout << "Rewards: " << rewards << endl;
-        cout << "Hiddens: " << hiddens << endl;
+        std::cout << "Rewards: " << rewards << std::endl;
+        std::cout << "Hiddens: " << hiddens << std::endl;
 
         printedOnce = true; // Đánh dấu đã in mê cung ít nhất một lần
     } else { // Nếu đã in mê cung ít nhất một lần, chỉ in mê cung mà không tính toán lại rewards và hiddens
@@ -257,32 +259,31 @@ void PrintMazeWithDestination(int endRow, int endCol) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (i == endRow && j == endCol) {
-                    cout << "D" << " "; // In ra vị trí của điểm đích
+                    std::cout << "D" << " "; // In ra vị trí của điểm đích
                 } else if (maze[i][j] == 0) {
-                    cout << "#" << " "; // Ô có tường
+                    std::cout << "#" << " "; // Ô có tường
                 } else if (maze[i][j] == 1) {
-                    cout << "." << " "; // Ô trống
+                    std::cout << "." << " "; // Ô trống
                 } else if (maze[i][j] == 2) {
-                    cout << "x" << " "; // Điểm thưởng
+                    std::cout << "x" << " "; // Điểm thưởng
                 } else if (maze[i][j] == 3) {
-                    cout << "?" << " "; // Nơi ẩn
+                    std::cout << "?" << " "; // Nơi ẩn
                 } else if (maze[i][j] == 4) {
-                    cout << "0" << " "; // Cổng bí mật
+                    std::cout << "0" << " "; // Cổng bí mật
                 } else {
-                    cout << "*" << " "; // Vị trí người chơi
+                    std::cout << "*" << " "; // Vị trí người chơi
                 }
             }
-            cout << endl;
+            std::cout << std::endl;
         }
     }
 }
 
 // Di chuyển người chơi trong mê cung
-// Di chuyển người chơi trong mê cung
 void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount) {
     char direction;
-    cout << "Nhập hướng di chuyển (w: lên, s: xuống, a: trái, d: phải): ";
-    cin >> direction;
+    std::cout << "Nhập hướng di chuyển (w: lên, s: xuống, a: trái, d: phải): ";
+    std::cin >> direction;
 
     switch (direction) {
         case 'w':
@@ -295,7 +296,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                         // Loại bỏ tường
                         maze[playerRow - 1][playerCol] = 1;
                     } else {
-                        cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << endl;
+                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
                         break;
                     }
                 }
@@ -305,7 +306,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                 if (maze[playerRow][playerCol] == 2) {
                     // Cập nhật điểm nếu người chơi đạt được phần thưởng
                     int randomScore = rand() % 3 + 1;
-                    cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << endl;
+                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     // Tăng biến đếm khu vực ẩn nếu người chơi đi qua khu vực ẩn
@@ -327,7 +328,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                         // Loại bỏ tường
                         maze[playerRow + 1][playerCol] = 1;
                     } else {
-                        cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << endl;
+                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
                         break;
                     }
                 }
@@ -337,7 +338,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                 if (maze[playerRow][playerCol] == 2) {
                     // Cập nhật điểm nếu người chơi đạt được phần thưởng
                     int randomScore = rand() % 3 + 1;
-                    cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << endl;
+                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     // Tăng biến đếm khu vực ẩn nếu người chơi đi qua khu vực ẩn
@@ -359,7 +360,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                         // Loại bỏ tường
                         maze[playerRow][playerCol - 1] = 1;
                     } else {
-                        cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << endl;
+                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
                         break;
                     }
                 }
@@ -369,7 +370,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                 if (maze[playerRow][playerCol] == 2) {
                     // Cập nhật điểm nếu người chơi đạt được phần thưởng
                     int randomScore = rand() % 3 + 1;
-                    cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << endl;
+                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     // Tăng biến đếm khu vực ẩn nếu người chơi đi qua khu vực ẩn
@@ -391,7 +392,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                         // Loại bỏ tường
                         maze[playerRow][playerCol + 1] = 1;
                     } else {
-                        cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << endl;
+                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
                         break;
                     }
                 }
@@ -401,7 +402,7 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                 if (maze[playerRow][playerCol] == 2) {
                     // Cập nhật điểm nếu người chơi đạt được phần thưởng
                     int randomScore = rand() % 3 + 1;
-                    cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << endl;
+                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     // Tăng biến đếm khu vực ẩn nếu người chơi đi qua khu vực ẩn
@@ -414,38 +415,38 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
             }
             break;
         default:
-            cout << "Hướng di chuyển không hợp lệ!" << endl;
+            std::cout << "Hướng di chuyển không hợp lệ!" << std::endl;
             break;
     }
 }
 
-// Tìm một ô trống ở cuối mê cung
-pair<int, int> FindEmptySpace() {
-    int endRow = ROWS - 2; // Hàng cuối cùng
-    int endCol = COLUMNS - 2; // Cột cuối cùng
+// Tìm một ô trống ở cuối mê cung để làm vị trí đích
+std::pair<int, int> FindEmptySpace() {
+  int endRow = ROWS - 2; // Hàng cuối cùng
+  int endCol = COLUMNS - 2; // Cột cuối cùng
 
-    // Lặp qua các ô trong mê cung từ cuối mê cung lên trên và từ phải sang trái
-    for (int i = endRow; i >= 0; i--) {
-        for (int j = endCol; j >= 0; j--) {
-            // Nếu ô hiện tại là trống và không phải là tường, trả về vị trí ô đó
-            if (maze[i][j] == 1) {
-                return make_pair(i, j);
-            }
-        }
+  // Lặp qua các ô trong mê cung từ cuối mê cung lên trên và từ phải sang trái
+  for (int i = endRow; i >= 0; i--) {
+    for (int j = endCol; j >= 0; j--) {
+      // Nếu ô hiện tại là trống và không phải là tường, trả về vị trí ô đó
+      if (maze[i][j] == 1) {
+        return std::make_pair(i, j);
+      }
     }
+  }
 
-    // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
-    return make_pair(0, 0);
+  // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
+  return std::make_pair(0, 0);
 }
 
-// Hàm chính
-int main() {
-    // Khởi tạo seed cho bộ tạo số ngẫu nhiên
+
+int run(){
+   // Khởi tạo seed cho bộ tạo số ngẫu nhiên
     srand(time(nullptr));
 
     CreateMaze(); // Tạo mê cung
     GenerateRandomWalls(); // Tạo tường ngẫu nhiên
-    FixMazeerror(); // Sửa lỗi mê cung
+    FixMazeError(); // Sửa lỗi mê cung
     FindRewards(); // Tìm vị trí các điểm thưởng
     BreakWalls(); // Xử lý ô trống không kề tường
 
@@ -457,7 +458,7 @@ int main() {
     maze[playerRow][playerCol] = 5; // Đánh dấu vị trí ban đầu của người chơi trên mê cung
 
     // Tìm một ô trống để đặt điểm đích
-    pair<int, int> endPosition = FindEmptySpace();
+    std::pair<int, int> endPosition = FindEmptySpace();
     int endRow = endPosition.first;
     int endCol = endPosition.second;
 
@@ -471,7 +472,7 @@ int main() {
         PrintMazeWithDestination(endRow, endCol);
 
         // In ra tổng điểm, số lần có thể phá tường và số lần đi qua khu vực ẩn
-        cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << endl;
+        std::cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << std::endl;
 
         // Di chuyển người chơi
         MovePlayer(playerRow, playerCol, score, breakCount, hiddenCount);
@@ -481,11 +482,11 @@ int main() {
     PrintMazeWithDestination(endRow, endCol);
 
     // In ra tổng điểm, số lần có thể phá tường và số lần đi qua khu vực ẩn
-    cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << endl;
+    std::cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << std::endl;
 
     // In ra thông báo khi người chơi hoàn thành mê cung
-    cout << "Congratulations! You've reached the destination!" << endl;
-    cout << "Your total score is: " << score << endl;
+    std::cout << "Congratulations! You've reached the destination!" << std::endl;
+    std::cout << "Your total score is: " << score << std::endl;
 
     return 0;
 }
