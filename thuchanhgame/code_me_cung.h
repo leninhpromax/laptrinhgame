@@ -6,10 +6,16 @@
 #include <algorithm>
 #include <random>
 #include <utility>
+#include <ctime>
+#include <cstdlib>
 
 const int ROWS = 50; // Số hàng của mê cung
 const int COLUMNS = 50; // Số cột của mê cung
 const int WALL_RATIO = 5; // Tạo ra tường có độ dài ngắn nhất là 5 ô
+const int GAME_DURATION = 180; // Thời gian giới hạn trò chơi (180 giây = 3 phút)
+
+// Hàm này sẽ tính thời gian còn lại
+int TimeLeft();
 
 // Tạo mê cung ban đầu
 void CreateMaze();
@@ -34,5 +40,11 @@ void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
 
 // Tìm một ô trống ở cuối mê cung để làm vị trí đích
 std::pair<int, int> FindEmptySpace();
+
+// Hàm này sẽ tính thời gian còn lại
+int TimeLeft();
+
+// Hàm run chứa logic chính của trò chơi
+int run();
 
 #endif

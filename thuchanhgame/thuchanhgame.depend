@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1710432927 source:d:\game\thuchanhgame\main.cpp
+1710467988 source:d:\game\thuchanhgame\main.cpp
 	<iostream>
 	<vector>
 	<algorithm>
@@ -9,14 +9,7 @@
 	<ctime>
 	"code_me_cung.h"
 
-1710433976 d:\game\thuchanhgame\code_me_cung.h
-	<iostream>
-	<vector>
-	<algorithm>
-	<random>
-	<utility>
-
-1710433959 source:d:\game\thuchanhgame\code_me_cung.cpp
+1710678526 d:\game\thuchanhgame\code_me_cung.h
 	<iostream>
 	<vector>
 	<algorithm>
@@ -24,4 +17,12 @@
 	<utility>
 	<ctime>
 	<cstdlib>
+
+1710683535 source:d:\game\thuchanhgame\code_me_cung.cpp
+	<algorithm>
+	<random>
+	<ctime>
+	<unistd.h>
+	<iostream>
+	<vector>
 
