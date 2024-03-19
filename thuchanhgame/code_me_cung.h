@@ -9,10 +9,10 @@
 #include <ctime>
 #include <cstdlib>
 
-const int ROWS = 50; // Số hàng của mê cung
-const int COLUMNS = 50; // Số cột của mê cung
-const int WALL_RATIO = 5; // Tạo ra tường có độ dài ngắn nhất là 5 ô
-const int GAME_DURATION = 180; // Thời gian giới hạn trò chơi (180 giây = 3 phút)
+const int ROWS = 20; // Số hàng của mê cung
+const int COLUMNS = 30; // Số cột của mê cung
+const int WALL_RATIO = 5; // Tỷ lệ ô tường
+const int GAME_DURATION = 720; // Thời gian giới hạn trò chơi (180 giây = 3 phút)
 
 // Hàm này sẽ tính thời gian còn lại
 int TimeLeft();

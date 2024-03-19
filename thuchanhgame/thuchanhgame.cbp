@@ -46,6 +46,8 @@
 		<Unit filename="code_me_cung.cpp" />
 		<Unit filename="code_me_cung.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="man_hinh.cpp" />
+		<Unit filename="man_hinh.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

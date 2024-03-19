@@ -1,14 +1,11 @@
 #include <algorithm>
 #include <random>
 #include <ctime>
-#include <unistd.h> // Sử dụng usleep trong hệ thống Linux/Unix
+#include <unistd.h>
 #include <iostream>
 #include <vector>
+#include "code_me_cung.h"
 
-const int ROWS = 50; // Số hàng của mê cung
-const int COLUMNS = 50; // Số cột của mê cung
-const int WALL_RATIO = 5; // Tỷ lệ ô tường
-const int GAME_DURATION = 360; // Thời gian giới hạn trò chơi (180 giây = 3 phút)
 clock_t startTime; // Thời gian bắt đầu của trò chơi
 
 // Hàm này sẽ tính thời gian còn lại
