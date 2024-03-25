@@ -167,7 +167,7 @@ void FindRewards() {
 }
 
 // Sửa lỗi mê cung
-void FixMazeerror() {
+void FixMazeError() {
     int i = 1;
     int j = 1;
     for (int di = 0; di <= 3; di++) {
@@ -434,51 +434,5 @@ std::pair<int, int> FindEmptySpace() {
 
   // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
   return std::make_pair(0, 0);
-}
-
-int run() {
-    srand(time(nullptr));
-
-    CreateMaze();
-    GenerateRandomWalls();
-    FixMazeerror();
-    FindRewards();
-    BreakWalls();
-
-    int playerRow = 1;
-    int playerCol = 1;
-    int score = 0;
-    int breakCount = 3;
-    int hiddenCount = 0;
-    maze[playerRow][playerCol] = 5;
-
-    std::pair<int, int> endPosition = FindEmptySpace();
-    int endRow = endPosition.first;
-    int endCol = endPosition.second;
-
-    maze[endRow][endCol] = 6;
-
-    startTime = clock();
-
-    while (playerRow != endRow || playerCol != endCol) {
-        int timeRemaining = TimeLeft();
-        if (timeRemaining <= 0) {
-            std::cout << "Hết thời gian! Game over." << std::endl;
-            break;
-        }
-        system("cls");
-        PrintMazeWithDestination(endRow, endCol);
-        std::cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << std::endl;
-
-        MovePlayer(playerRow, playerCol, score, breakCount, hiddenCount);
-    }
-
-    PrintMazeWithDestination(endRow, endCol);
-    std::cout << "Total Score: " << score << ", Break Count: " << breakCount << ", Hidden Count: " << hiddenCount << std::endl;
-
-    std::cout << "Congratulations! You've reached the destination!" << std::endl;
-    std::cout << "Your total score is: " << score << std::endl;
-
-    return 0;
 }
 

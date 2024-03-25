@@ -3,7 +3,7 @@
 #include <iostream>
 #include  "man_hinh.h"
 
-const int SCREEN_WIDTH = 1200;
+const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 const char* WINDOW_TITLE = "Game";
 
@@ -94,4 +94,3 @@ SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer)
 
     return texture;
 }
-

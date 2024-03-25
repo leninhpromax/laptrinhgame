@@ -1,5 +1,6 @@
 #include <iostream>
 #include "man_hinh.h"
+#include "code_me_cung.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
     }
 
     // Load hình nhân vật người chơi
-    SDL_Texture* player = loadTexture("_98726804-69ea-42a3-8512-b3986c6ab364.jpg", renderer);
+    SDL_Texture* player = loadTexture("player.jpg", renderer);
     if (player == nullptr) {
         // Nếu load không thành công, giải phóng bộ nhớ và đóng SDL
         quitSDL(window, renderer);
@@ -32,28 +33,44 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Mảng chứa thông tin về các tường: x, y, w, h
-    SDL_Rect walls[5] = {
-        {100, 100, 50, 200},
-        {200, 200, 100, 50},
-        {400, 300, 150, 50},
-        {500, 400, 50, 150},
-        {300, 100, 50, 150}
-    };
+    std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0));
+    srand(time(nullptr));
+
+    CreateMaze();
+    GenerateRandomWalls();
+    FixMazeError();
+    FindRewards();
+    BreakWalls();
+
+    int playerRow = 1;
+    int playerCol = 1;
+    int score = 0;
+    int breakCount = 3;
+    int hiddenCount = 0;
+    maze[playerRow][playerCol] = 5;
+
+    std::pair<int, int> endPosition = FindEmptySpace();
+    int endRow = endPosition.first;
+    int endCol = endPosition.second;
+
+    maze[endRow][endCol] = 6;
 
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
 
-    // Vẽ các tường lên renderer
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    for (int i = 0; i < 5; ++i) {
-        SDL_RenderFillRect(renderer, &walls[i]);
+   for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLUMNS; j++) {
+        if (maze[i][j] == 5) {
+            renderTexture(player, 16 * i, 16 * j, 16, 16, renderer);
+        } else if (maze[i][j] == 6) {
+            renderTexture(target, 16 * i, 16 * j, 16, 16, renderer);
+        } else if (maze[i][j] == 0) { // Điều kiện mới để in ra tường
+            SDL_Rect wallRect = {16 * i, 16 * j, 16, 16}; // Tạo hình chữ nhật cho tường
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Đặt màu cho tường (màu đỏ)
+            SDL_RenderFillRect(renderer, &wallRect); // Vẽ tường lên renderer
+        }
     }
-
-    // Vẽ nhân vật người chơi và mục tiêu lên renderer
-    renderTexture(player, 50, 50, 20, 20, renderer); // Đặt kích thước của người chơi là 20x20
-    renderTexture(target, 700, 500, 20, 20, renderer); // Đặt kích thước của mục tiêu là 20x20
-
+}
     // Hiển thị toàn bộ nội dung đã vẽ trên renderer lên màn hình
     SDL_RenderPresent(renderer);
 
