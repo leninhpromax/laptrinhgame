@@ -2,8 +2,7 @@
 #include "man_hinh.h"
 #include "code_me_cung.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     // Khởi tạo SDL và tạo cửa sổ
     SDL_Window* window = initSDL(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     // Tạo renderer
@@ -58,19 +57,9 @@ int main(int argc, char *argv[])
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
 
-   for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLUMNS; j++) {
-        if (maze[i][j] == 5) {
-            renderTexture(player, 16 * i, 16 * j, 16, 16, renderer);
-        } else if (maze[i][j] == 6) {
-            renderTexture(target, 16 * i, 16 * j, 16, 16, renderer);
-        } else if (maze[i][j] == 0) { // Điều kiện mới để in ra tường
-            SDL_Rect wallRect = {16 * i, 16 * j, 16, 16}; // Tạo hình chữ nhật cho tường
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Đặt màu cho tường (màu đỏ)
-            SDL_RenderFillRect(renderer, &wallRect); // Vẽ tường lên renderer
-        }
-    }
-}
+    // In ra mê cung với vị trí đích
+    PrintMazeWithDestination(endRow, endCol);
+
     // Hiển thị toàn bộ nội dung đã vẽ trên renderer lên màn hình
     SDL_RenderPresent(renderer);
 
