@@ -18,7 +18,6 @@ const int GAME_DURATION = 720; // Thời gian giới hạn trò chơi (180 giây
 // Hàm này sẽ tính thời gian còn lại
 int TimeLeft();
 
-
 // Tạo mê cung ban đầu
 void CreateMaze();
 
@@ -34,13 +33,14 @@ void FixMazeError();
 // Xử lý ô tường có thể phá được và ô tường không phá được
 void BreakWalls();
 
-// In ra mê cung với vị trí đích
-void PrintMazeWithDestination(int endRow, int endCol);
-
 // Di chuyển người chơi trong mê cung
 void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount);
 
 // Tìm một ô trống ở cuối mê cung để làm vị trí đích
 std::pair<int, int> FindEmptySpace();
+
+extern SDL_Texture* player;
+extern SDL_Texture* target;
+extern SDL_Renderer* renderer;
 
 #endif

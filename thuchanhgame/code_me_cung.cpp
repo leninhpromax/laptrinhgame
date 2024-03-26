@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <random>
 #include <ctime>
-#include <unistd.h>
 #include <iostream>
 #include <vector>
 #include <SDL.h>
@@ -202,104 +201,6 @@ void BreakWalls() {
                 }
             }
         }
-    }
-}
-
-extern SDL_Texture* player;
-extern SDL_Texture* target;
-extern SDL_Renderer* renderer;
-
-void PrintMazeWithDestination(int endRow, int endCol) {
-    static bool printedOnce = false; // Biến đánh dấu đã in mê cung ít nhất một lần
-    if (!printedOnce) { // Kiểm tra nếu chưa in mê cung ít nhất một lần
-        int rewards = 0, hiddens = 0;
-        // Tính toán giá trị của rewards và hiddens
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                if (maze[i][j] == 2) {
-                    rewards++;
-                } else if (maze[i][j] == 3) {
-                    hiddens++;
-                }
-            }
-        }
-
-        // Đánh dấu các cạnh của mê cung
-        for (int i = 0; i < ROWS; i++) {
-            maze[i][0] = 0; // Cột đầu tiên
-            maze[i][COLUMNS - 1] = 0; // Cột cuối cùng
-        }
-        for (int j = 0; j < COLUMNS; j++) {
-            maze[0][j] = 0; // Hàng đầu tiên
-            maze[ROWS - 1][j] = 0; // Hàng cuối cùng
-        }
-
-        // Vẽ mê cung lên màn hình với các ký hiệu tương ứng
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                if (i == endRow && j == endCol) {
-                    renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí của điểm đích
-                } else if (maze[i][j] == 0) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 1) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 2) {
-                    renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra điểm thưởng
-                } else if (maze[i][j] == 3) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 4) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else {
-                    renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
-                }
-            }
-        }
-
-        // In ra tổng số lượng rewards và hiddens trong mê cung
-        std::cout << "Rewards: " << rewards << std::endl;
-        std::cout << "Hiddens: " << hiddens << std::endl;
-
-        printedOnce = true; // Đánh dấu đã in mê cung ít nhất một lần
-    } else { // Nếu đã in mê cung ít nhất một lần, chỉ in mê cung mà không tính toán lại rewards và hiddens
-        // Vẽ mê cung lên màn hình với các ký hiệu tương ứng
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                if (i == endRow && j == endCol) {
-                    renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí của điểm đích
-                } else if (maze[i][j] == 0) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 1) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 2) {
-                    renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra điểm thưởng
-                } else if (maze[i][j] == 3) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
-                    SDL_RenderFillRect(renderer, &wallRect);
-                } else if (maze[i][j] == 4) {
-                    SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
-                }
-                  else {
-                    renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
-                }
-            }
-        }
-        // In ra thông tin về thời gian còn lại
-        int timeRemaining = TimeLeft();
-        std::cout << "Time remaining: " << timeRemaining << " seconds" << std::endl;
     }
 }
 
