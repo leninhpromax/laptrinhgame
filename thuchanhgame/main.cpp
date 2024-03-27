@@ -2,38 +2,6 @@
 #include "man_hinh.h"
 #include "code_me_cung.h"
 
-// Khai báo hàm mới để vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, int endRow, int endCol, SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
-
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLUMNS; j++) {
-            if (maze[i][j] == 6) {
-                renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí của điểm đích
-            } else if (maze[i][j] == 0) {
-                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
-                SDL_RenderFillRect(renderer, &wallRect);
-            } else if (maze[i][j] == 1) {
-                SDL_Rect emptyRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
-                SDL_RenderFillRect(renderer, &emptyRect);
-            } else if (maze[i][j] == 2) {
-                renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra điểm thưởng
-            } else if (maze[i][j] == 3) {
-                SDL_Rect hiddenRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
-                SDL_RenderFillRect(renderer, &hiddenRect);
-            } else if (maze[i][j] == 4) {
-                SDL_Rect secretGateRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
-                SDL_RenderFillRect(renderer, &secretGateRect);
-            } else if (maze[i][j] == 5) {
-                renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
-            }
-        }
-    }
-}
-
 int main(int argc, char *argv[]) {
     // Khởi tạo SDL và tạo cửa sổ
     SDL_Window* window = initSDL(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
