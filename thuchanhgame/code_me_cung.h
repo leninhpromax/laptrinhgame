@@ -19,19 +19,19 @@ const int GAME_DURATION = 720; // Thời gian giới hạn trò chơi (180 giây
 int TimeLeft();
 
 // Tạo mê cung ban đầu
-void CreateMaze();
+void CreateMaze(std::vector<std::vector<int>>& maze);
 
 // Tạo tường ngẫu nhiên trong mê cung
-void GenerateRandomWalls();
+void GenerateRandomWalls(std::vector<std::vector<int>>& maze);
 
 // Tìm vị trí các ô có điểm thưởng
-void FindRewards();
+void FindRewards(std::vector<std::vector<int>>& maze);
 
 // Sửa lỗi mê cung
-void FixMazeError();
+void FixMazeError(std::vector<std::vector<int>>& maze);
 
 // Xử lý ô tường có thể phá được và ô tường không phá được
-void BreakWalls();
+void BreakWalls(std::vector<std::vector<int>>& maze);
 
 // Di chuyển người chơi trong mê cung
 void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount);
@@ -41,6 +41,10 @@ std::pair<int, int> FindEmptySpace();
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;
+extern SDL_Texture* target2;
 extern SDL_Renderer* renderer;
+
+
+
 
 #endif

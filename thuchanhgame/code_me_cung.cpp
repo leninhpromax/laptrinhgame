@@ -7,18 +7,10 @@
 #include <SDL_image.h>
 #include "code_me_cung.h"
 
-clock_t startTime; // Thời gian bắt đầu của trò chơi
-
-// Hàm này sẽ tính thời gian còn lại
-int TimeLeft() {
-    clock_t now = clock();
-    int elapsedTime = (now - startTime) / CLOCKS_PER_SEC;
-    return GAME_DURATION - elapsedTime;
-}
 std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0)); // Mảng lưu trữ mê cung
 
 // Tạo mê cung ban đầu
-void CreateMaze() {
+void CreateMaze(std::vector<std::vector<int>>& maze) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
             maze[i][j] = 1; // Gán giá trị 1 cho tất cả các ô trong mê cung, biểu thị cho không gian trống
@@ -27,7 +19,7 @@ void CreateMaze() {
 }
 
 // Tạo tường ngẫu nhiên trong mê cung
-void GenerateRandomWalls() {
+void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
     // Khởi tạo thiết bị tạo số ngẫu nhiên
     std::random_device rd;
 
@@ -113,7 +105,7 @@ void GenerateRandomWalls() {
 }
 
 // Tìm vị trí các ô có điểm thưởng
-void FindRewards() {
+void FindRewards(std::vector<std::vector<int>>& maze) {
     for (int i = 1; i < ROWS - 1; i++) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 1) {
@@ -167,7 +159,7 @@ void FindRewards() {
 }
 
 // Sửa lỗi mê cung
-void FixMazeError() {
+void FixMazeError(std::vector<std::vector<int>>& maze) {
     int i = 1;
     int j = 1;
     for (int di = 0; di <= 3; di++) {
@@ -178,10 +170,19 @@ void FixMazeError() {
             }
         }
     }
+    // Đánh dấu các cạnh của mê cung thành tường
+        for (int i = 0; i < ROWS; i++) {
+            maze[i][0] = 0; // Cột đầu tiên
+            maze[i][COLUMNS - 1] = 0; // Cột cuối cùng
+        }
+        for (int j = 0; j < COLUMNS; j++) {
+            maze[0][j] = 0; // Hàng đầu tiên
+            maze[ROWS - 1][j] = 0; // Hàng cuối cùng
+        }
 }
 
 // Xử lý ô trống không kề tường
-void BreakWalls() {
+void BreakWalls(std::vector<std::vector<int>>& maze) {
     for (int i = 1; i < ROWS - 1; i++) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 0) {
@@ -203,7 +204,6 @@ void BreakWalls() {
         }
     }
 }
-
 void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount) {
     char direction;
     std::cout << "Nhập hướng di chuyển (w: lên, s: xuống, a: trái, d: phải): ";
@@ -354,4 +354,3 @@ std::pair<int, int> FindEmptySpace() {
   // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
   return std::make_pair(0, 0);
 }
-

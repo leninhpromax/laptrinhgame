@@ -3,10 +3,11 @@
 #include "code_me_cung.h"
 
 // Khai báo hàm mới để vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, int endRow, int endCol, SDL_Texture* player, SDL_Texture* target, SDL_Renderer* renderer) {
+void renderMaze(std::vector<std::vector<int>>& maze, int endRow, int endCol, SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
+
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
-            if (i == endRow && j == endCol) {
+            if (maze[i][j] == 6) {
                 renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí của điểm đích
             } else if (maze[i][j] == 0) {
                 SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
@@ -56,7 +57,13 @@ int main(int argc, char *argv[]) {
     }
 
     // Load hình mục tiêu
-    SDL_Texture* target = loadTexture("_0af7a7fc-de20-4425-a534-5b36c221ea87.jpg", renderer);
+    SDL_Texture* target = loadTexture("congchua2.jpg", renderer);
+    if (target == nullptr) {
+        // Nếu load không thành công, giải phóng bộ nhớ và đóng SDL
+        quitSDL(window, renderer);
+        return 1;
+    }
+     SDL_Texture* target2 = loadTexture("congchua1.jpg", renderer);
     if (target == nullptr) {
         // Nếu load không thành công, giải phóng bộ nhớ và đóng SDL
         quitSDL(window, renderer);
@@ -65,11 +72,12 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0));
     srand(time(nullptr));
-    CreateMaze();
-    GenerateRandomWalls();
-    FixMazeError();
-    FindRewards();
-    BreakWalls();
+    CreateMaze(maze);
+    GenerateRandomWalls(maze);
+    FixMazeError(maze);
+    FindRewards(maze);
+    BreakWalls(maze);
+
     int playerRow = 1;
     int playerCol = 1;
     int score = 0;
@@ -87,7 +95,7 @@ int main(int argc, char *argv[]) {
     SDL_RenderCopy(renderer, background, NULL, NULL);
 
     // Gọi hàm để vẽ mê cung
-    renderMaze(maze, endRow, endCol, player, target, renderer);
+    renderMaze(maze, endRow, endCol, player, target, target2, renderer);
 
     // Hiển thị toàn bộ nội dung đã vẽ trên renderer lên màn hình
     SDL_RenderPresent(renderer);

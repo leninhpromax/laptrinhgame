@@ -95,4 +95,3 @@ SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer)
     return texture;
 }
 
-
