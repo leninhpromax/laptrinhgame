@@ -111,16 +111,16 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
             if (maze[i][j] == 1) {
                 int wallCount = 0;
                 // Kiểm tra các ô xung quanh
-                if (maze[i][j - 1] == 0 ) {
+                if (maze[i][j - 1] == 0 && j-1 > 0 ) {
                     wallCount++;
                 }
-                if (maze[i][j + 1] == 0 ) {
+                if (maze[i][j + 1] == 0 && j+1 < COLUMNS-1) {
                     wallCount++;
                 }
-                if (maze[i + 1][j] == 0 ) {
+                if (maze[i + 1][j] == 0 && i+1 < ROWS-1) {
                     wallCount++;
                 }
-                if ( maze[i - 1][j] == 0 ) {
+                if ( maze[i - 1][j] == 0 && i-1 > 0) {
                     wallCount++;
                 }
                 // Nếu có 3 ô trống xung quanh, đánh dấu ô hiện tại
@@ -137,20 +137,20 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
             if (maze[i][j] == 1) {
                 int count = 0;
                 // Kiểm tra các ô xung quanh
-                if (maze[i][j - 1] == 0 && maze[i-1][j] == 0) {
+                if (maze[i][j - 1] == 0 && maze[i-1][j] == 0 && j-1 > 0 && i-1 > 0) {
                     count++;
                 }
-                 if (maze[i][j + 1] == 0 && maze[i-1][j] == 0) {
+                 if (maze[i][j + 1] == 0 && maze[i-1][j] == 0 && j+1 < COLUMNS-1 && i-1 > 0) {
                     count++;
                 }
-                 if (maze[i][j - 1] == 0 && maze[i+1][j] == 0) {
+                 if (maze[i][j - 1] == 0 && maze[i+1][j] == 0 && j-1 > 0 && i+1 < ROWS-1) {
                     count++;
                 }
-                 if (maze[i][j + 1] == 0 && maze[i+1][j] == 0) {
+                 if (maze[i][j + 1] == 0 && maze[i+1][j] == 0 && j+1 < COLUMNS-1 && i+1 < ROWS-1) {
                     count++;
                 }
                 // Nếu có 3 ô trống xung quanh, đánh dấu ô hiện tại
-                if (count == 1) {
+                if (count == 2) {
                     maze[i][j] = 3;
                 }
             }
@@ -162,8 +162,8 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
 void FixMazeError(std::vector<std::vector<int>>& maze) {
     int i = 1;
     int j = 1;
-    for (int di = 0; di <= 3; di++) {
-        for (int dj = 0; dj <= 3; dj++) {
+    for (int di = 1; di <= 3; di++) {
+        for (int dj = 1; dj <= 3; dj++) {
             // Kiểm tra xem truy cập có vượt ra ngoài giới hạn không
             if (i + di < maze.size() && j + dj < maze[i].size()) {
                 maze[i + di][j + dj] = 1;
@@ -187,156 +187,66 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 0) {
                 int count = 0;
-                if (maze[i][j + 1] == 0 || maze[i][j - 1] == 0) {
-                    count = 1;
+                for (int di =-1; di <= 1; di ++){
+                    for (int dj = -1; dj <= 1; dj ++){
+                        if (i + di > 1 && i+di < ROWS-1 && j + dj > 1 && j + dj < COLUMNS-1){
+                            if (maze[i+di][j+dj] == 0){
+                                count ++;
+                            }
+                        }
+                    }
                 }
-                if (count == 0) {
+                if (count == 3){
                     maze[i][j] = 4;
-                } else {
-                    if (maze[i + 1][j] == 0 || maze[i - 1][j] == 0) {
-                        count = 2;
-                    }
-                    if (count == 1) {
-                        maze[i][j] = 4;
-                    }
                 }
             }
         }
     }
 }
-void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount) {
-    char direction;
-    std::cout << "Nhập hướng di chuyển (w: lên, s: xuống, a: trái, d: phải): ";
-    std::cin >> direction;
 
-    switch (direction) {
-        case 'w':
-            if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0) {
-                if (maze[playerRow - 1][playerCol] == 4) {
-                    if (breakCount > 0) {
-                        breakCount--;
-                        maze[playerRow - 1][playerCol] = 1;
-                    } else {
-                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
-                        break;
-                    }
-                }
-                maze[playerRow][playerCol] = 1;
-                playerRow--;
-                if (maze[playerRow][playerCol] == 2) {
-                    int randomScore = rand() % 3 + 1;
-                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
-                    score += randomScore;
-                } else if (maze[playerRow][playerCol] == 3) {
-                    hiddenCount++;
-                    breakCount ++;
-                } else if (maze[playerRow][playerCol] == 4) {
-                    breakCount--;
-                }
-                maze[playerRow][playerCol] = 5;
-            }
-            else {
-                std::cout << "bạn không thể phá hay đi qua tường này " << std::endl;
-            }
-
-            break;
-        case 's':
-           if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0) {
-                if (maze[playerRow + 1][playerCol] == 4) {
-                    if (breakCount > 0) {
-                        breakCount--;
-                        maze[playerRow + 1][playerCol] = 1;
-                    } else {
-                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
-                        break;
-                    }
-                }
-                maze[playerRow][playerCol] = 1;
-                playerRow++;
-                if (maze[playerRow][playerCol] == 2) {
-                    int randomScore = rand() % 3 + 1;
-                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
-                    score += randomScore;
-                } else if (maze[playerRow][playerCol] == 3) {
-                    hiddenCount++;
-                    breakCount ++;
-                } else if (maze[playerRow][playerCol] == 4) {
-                    breakCount--;
-                }
-                maze[playerRow][playerCol] = 5;
-            }
-            else {
-                std::cout << "bạn không thể phá hay đi qua tường này " << std::endl;
-            }
-
-            break;
-        case 'a':
-            if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0) {
-                if (maze[playerRow][playerCol - 1] == 4) {
-                    if (breakCount > 0) {
-                        breakCount--;
-                        maze[playerRow][playerCol - 1] = 1;
-                    } else {
-                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
-                        break;
-                    }
-                }
-                maze[playerRow][playerCol] = 1;
-                playerCol--;
-                if (maze[playerRow][playerCol] == 2) {
-                    int randomScore = rand() % 3 + 1;
-                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
-                    score += randomScore;
-                } else if (maze[playerRow][playerCol] == 3) {
-                    hiddenCount++;
-                    breakCount ++;
-                } else if (maze[playerRow][playerCol] == 4) {
-                    breakCount--;
-                }
-                maze[playerRow][playerCol] = 5;
-            }
-            else {
-                std::cout << "bạn không thể phá hay đi qua tường này " << std::endl;
-            }
-
-            break;
-        case 'd':
-            if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0) {
-                if (maze[playerRow][playerCol + 1] == 4) {
-                    if (breakCount > 0) {
-                        breakCount--;
-                        maze[playerRow][playerCol + 1] = 1;
-                    } else {
-                        std::cout << "Bạn không có đủ lượt phá tường để đi qua tường này!" << std::endl;
-                        break;
-                    }
-                }
-                maze[playerRow][playerCol] = 1;
-                playerCol++;
-                if (maze[playerRow][playerCol] == 2) {
-                    int randomScore = rand() % 3 + 1;
-                    std::cout << "Bạn đã đạt được phần thưởng! Bạn nhận được " << randomScore << " điểm!" << std::endl;
-                    score += randomScore;
-                } else if (maze[playerRow][playerCol] == 3) {
-                    hiddenCount++;
-                    breakCount ++;
-                } else if (maze[playerRow][playerCol] == 4) {
-                    breakCount--;
-                }
-                maze[playerRow][playerCol] = 5;
-            }
-            else {
-                std::cout << "bạn không thể phá hay đi qua tường này " << std::endl;
-            }
-
-            break;
-        default:
-            std::cout << "Hướng di chuyển không hợp lệ!" << std::endl;
-            break;
+// Hàm để di chuyển người chơi trong mê cung
+void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player) {
+  SDL_Event e;
+  while (SDL_PollEvent(&e) != 0) {
+    if (e.type == SDL_KEYDOWN) {
+      switch (e.key.keysym.sym) {
+        case SDLK_w:
+          if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0) {
+            maze[playerRow][playerCol] = 1;
+            playerRow--;
+            maze[playerRow][playerCol] = 5;
+          }
+          break;
+        case SDLK_s:
+          if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0) {
+            maze[playerRow][playerCol] = 1;
+            playerRow++;
+            maze[playerRow][playerCol] = 5;
+          }
+          break;
+        case SDLK_a:
+          if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0) {
+            maze[playerRow][playerCol] = 1;
+            playerCol--;
+            maze[playerRow][playerCol] = 5;
+          }
+          break;
+        case SDLK_d:
+          if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0) {
+            maze[playerRow][playerCol] = 1;
+            playerCol++;
+            maze[playerRow][playerCol] = 5;
+          }
+          break;
+      }
     }
+  }
+  renderMaze(maze, player, nullptr, nullptr, renderer); // Vẽ lại mê cung sau khi di chuyển người chơi
+  SDL_RenderPresent(renderer); // Hiển thị lên màn hình
+  SDL_Delay(100); // Đợi một chút để tránh di chuyển quá nhanh
 }
 
-// Tìm một ô trống ở cuối mê cung đẻ làm đích
+// Tìm một ô trống ở cuối mê cung để làm đích
 std::pair<int, int> FindEmptySpace() {
   int endRow = ROWS - 2; // Hàng cuối cùng
   int endCol = COLUMNS - 2; // Cột cuối cùng
@@ -352,11 +262,11 @@ std::pair<int, int> FindEmptySpace() {
   }
 
   // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
-  return std::make_pair(0, 0);
+  return std::make_pair(ROWS-2, COLUMNS-2);
 }
 
 // Khai báo hàm mới để vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, int endRow, int endCol, SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
+void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
 
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {

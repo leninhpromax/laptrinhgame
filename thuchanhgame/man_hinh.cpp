@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
-#include  "man_hinh.h"
+#include "man_hinh.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
@@ -11,6 +11,7 @@ void logErrorAndExit(const char* msg, const char* error)
 {
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
     SDL_Quit();
+    exit(1); // Thoát khỏi chương trình với mã lỗi 1
 }
 
 SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITLE)
@@ -24,8 +25,8 @@ SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITL
     if (window == nullptr) logErrorAndExit("CreateWindow", SDL_GetError());
 
     // Khởi tạo SDL_image để có thể load các định dạng hình ảnh khác nhau
-    if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG))
-        logErrorAndExit( "SDL_image error:", IMG_GetError());
+    if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG) // Kiểm tra chỉ cần SDL_IMAGE_INIT_PNG đã được khởi tạo
+        logErrorAndExit("IMG_Init", IMG_GetError());
 
     return window;
 }
@@ -33,8 +34,7 @@ SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITL
 SDL_Renderer* createRenderer(SDL_Window* window)
 {
     // Tạo renderer để vẽ đồ họa lên cửa sổ
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED |
-                                              SDL_RENDERER_PRESENTVSYNC);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (renderer == nullptr) logErrorAndExit("CreateRenderer", SDL_GetError());
 
@@ -72,6 +72,8 @@ void waitUntilKeyPressed()
 
 void renderTexture(SDL_Texture *texture, int x, int y, int width, int height, SDL_Renderer* renderer)
 {
+    if (texture == nullptr) return; // Kiểm tra texture có hợp lệ không trước khi vẽ
+
     // Vẽ một texture lên renderer tại vị trí (x, y) với kích thước (width, height)
     SDL_Rect dest;
 
@@ -88,10 +90,9 @@ SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer)
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", filename);
 
     SDL_Texture *texture = IMG_LoadTexture(renderer, filename);
-    if (texture == NULL) {
+    if (texture == nullptr) {
         SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "Load texture %s", IMG_GetError());
     }
 
     return texture;
 }
-

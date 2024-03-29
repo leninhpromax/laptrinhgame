@@ -31,13 +31,13 @@ void FixMazeError(std::vector<std::vector<int>>& maze);
 void BreakWalls(std::vector<std::vector<int>>& maze);
 
 // Hàm di chuyển người chơi
-void MovePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount);
+void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player);
 
 // Hàm tìm một ô trống ở cuối mê cung làm đích
 std::pair<int, int> FindEmptySpace();
 
 // Hàm vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, int endRow, int endCol, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer);
+void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer);
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;
