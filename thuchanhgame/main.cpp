@@ -59,12 +59,16 @@ int main(int argc, char *argv[]) {
   std::pair<int, int> endPosition = FindEmptySpace();
   int endRow = endPosition.first;
   int endCol = endPosition.second;
- maze[endRow][endCol] = 6;
+  maze[endRow][endCol] = 6;
+  std::pair<int, int> endPosition1 = FindMostChallengingPosition();
+  int endRow1 = endPosition1.first;
+  int endCol1 = endPosition1.second;
+  maze[endRow1][endCol1] = 7;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
   // Hiển thị mê cung và người chơi
-  // Hiển thị mê cung và người chơi
+
   renderMaze(maze, player, target, target2, renderer);
   // Hiển thị lên màn hình
   SDL_RenderPresent(renderer);

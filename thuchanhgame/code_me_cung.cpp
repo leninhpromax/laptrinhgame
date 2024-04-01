@@ -1,3 +1,4 @@
+#pragma once
 #include <algorithm>
 #include <random>
 #include <ctime>
@@ -150,7 +151,7 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
                     count++;
                 }
                 // Nếu có 3 ô trống xung quanh, đánh dấu ô hiện tại
-                if (count == 2) {
+                if (count == 1) {
                     maze[i][j] = 3;
                 }
             }
@@ -162,8 +163,8 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
 void FixMazeError(std::vector<std::vector<int>>& maze) {
     int i = 1;
     int j = 1;
-    for (int di = 1; di <= 3; di++) {
-        for (int dj = 1; dj <= 3; dj++) {
+    for (int di = 0; di <= 2; di++) {
+        for (int dj = 0; dj <= 2; dj++) {
             // Kiểm tra xem truy cập có vượt ra ngoài giới hạn không
             if (i + di < maze.size() && j + dj < maze[i].size()) {
                 maze[i + di][j + dj] = 1;
@@ -187,23 +188,23 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 0) {
                 int count = 0;
-                for (int di =-1; di <= 1; di ++){
-                    for (int dj = -1; dj <= 1; dj ++){
-                        if (i + di > 1 && i+di < ROWS-1 && j + dj > 1 && j + dj < COLUMNS-1){
-                            if (maze[i+di][j+dj] == 0){
-                                count ++;
-                            }
-                        }
-                    }
+                if (maze[i][j + 1] == 0 || maze[i][j - 1] == 0) {
+                    count = 1;
                 }
-                if (count == 3){
+                if (count == 0) {
                     maze[i][j] = 4;
+                } else {
+                    if (maze[i + 1][j] == 0 || maze[i - 1][j] == 0) {
+                        count = 2;
+                    }
+                    if (count == 1) {
+                        maze[i][j] = 4;
+                    }
                 }
             }
         }
     }
 }
-
 // Hàm để di chuyển người chơi trong mê cung
 void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player) {
   SDL_Event e;
@@ -247,6 +248,41 @@ void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& m
 }
 
 // Tìm một ô trống ở cuối mê cung để làm đích
+std::pair<int, int> FindMostChallengingPosition() {
+    int maxDifficulty = 0; // Độ khó tối đa
+    std::pair<int, int> mostChallengingPosition = std::make_pair(0, 0); // Vị trí khó tìm thấy nhất
+
+    // Duyệt qua mỗi ô trong mê cung
+    for (int i = 1; i < ROWS - 1; i++) {
+        for (int j = 1; j < COLUMNS - 1; j++) {
+            // Nếu ô hiện tại là trống và không phải là tường
+            if (maze[i][j] == 1) {
+                // Tính độ khó của ô hiện tại bằng cách đếm số lượng ô trống xung quanh
+                int difficulty = 0;
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        // Bỏ qua ô hiện tại
+                        if (dx != 0 || dy != 0) {
+                            if (maze[i + dx][j + dy] == 0) {
+                                difficulty++; // Tăng độ khó nếu ô xung quanh trống
+                            }
+                        }
+                    }
+                }
+
+                // So sánh với độ khó tối đa hiện tại
+                if (difficulty > maxDifficulty) {
+                    maxDifficulty = difficulty;
+                    mostChallengingPosition = std::make_pair(i, j); // Lưu vị trí ô có độ khó cao nhất
+                }
+            }
+        }
+    }
+
+    return mostChallengingPosition; // Trả về vị trí ô có độ khó cao nhất
+}
+
+// Tìm một ô trống ở cuối mê cung
 std::pair<int, int> FindEmptySpace() {
   int endRow = ROWS - 2; // Hàng cuối cùng
   int endCol = COLUMNS - 2; // Cột cuối cùng
@@ -267,11 +303,12 @@ std::pair<int, int> FindEmptySpace() {
 
 // Khai báo hàm mới để vẽ mê cung
 void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
-
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
             if (maze[i][j] == 6) {
-                renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí của điểm đích
+                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
+                SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Màu  cho ô có tường
+                SDL_RenderFillRect(renderer, &wallRect);
             } else if (maze[i][j] == 0) {
                 SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
                 SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
@@ -292,6 +329,10 @@ void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Tex
                 SDL_RenderFillRect(renderer, &secretGateRect);
             } else if (maze[i][j] == 5) {
                 renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
+            } else if (maze[i][j] == 7) {
+                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Màu trắng cho ô có tường
+                SDL_RenderFillRect(renderer, &wallRect);
             }
         }
     }
