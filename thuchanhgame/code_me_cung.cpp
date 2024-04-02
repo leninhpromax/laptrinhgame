@@ -206,80 +206,113 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
     }
 }
 // Hàm để di chuyển người chơi trong mê cung
-void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player) {
+void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player) {
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_w:
           if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0) {
-            maze[playerRow][playerCol] = 1;
-            playerRow--;
-            maze[playerRow][playerCol] = 5;
-          }
-          break;
+                if (maze[playerRow - 1][playerCol] == 4) {
+                    if (breakCount > 0) {
+                        breakCount--;
+                        maze[playerRow - 1][playerCol] = 1;
+                    } else {
+                        break;
+                    }
+                }
+                maze[playerRow][playerCol] = 1;
+                playerRow--;
+                if (maze[playerRow][playerCol] == 2) {
+                    int randomScore = rand() % 3 + 1;
+                    score += randomScore;
+                } else if (maze[playerRow][playerCol] == 3) {
+                    hiddenCount++;
+                    breakCount ++;
+                } else if (maze[playerRow][playerCol] == 4) {
+                    breakCount--;
+                }
+                maze[playerRow][playerCol] = 5;
+            }
+            break;
         case SDLK_s:
-          if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0) {
-            maze[playerRow][playerCol] = 1;
-            playerRow++;
-            maze[playerRow][playerCol] = 5;
-          }
-          break;
+         if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0) {
+                if (maze[playerRow + 1][playerCol] == 4) {
+                    if (breakCount > 0) {
+                        breakCount--;
+                        maze[playerRow + 1][playerCol] = 1;
+                    } else {
+                        break;
+                    }
+                }
+                maze[playerRow][playerCol] = 1;
+                playerRow++;
+                if (maze[playerRow][playerCol] == 2) {
+                    int randomScore = rand() % 3 + 1;
+                    score += randomScore;
+                } else if (maze[playerRow][playerCol] == 3) {
+                    hiddenCount++;
+                    breakCount ++;
+                } else if (maze[playerRow][playerCol] == 4) {
+                    breakCount--;
+                }
+                maze[playerRow][playerCol] = 5;
+            }
+            break;
         case SDLK_a:
-          if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0) {
-            maze[playerRow][playerCol] = 1;
-            playerCol--;
-            maze[playerRow][playerCol] = 5;
-          }
+           if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0) {
+                if (maze[playerRow][playerCol - 1] == 4) {
+                    if (breakCount > 0) {
+                        breakCount--;
+                        maze[playerRow][playerCol - 1] = 1;
+                    } else {
+                        break;
+                    }
+                }
+                maze[playerRow][playerCol] = 1;
+                playerCol--;
+                if (maze[playerRow][playerCol] == 2) {
+                    int randomScore = rand() % 3 + 1;
+                    score += randomScore;
+                } else if (maze[playerRow][playerCol] == 3) {
+                    hiddenCount++;
+                    breakCount ++;
+                } else if (maze[playerRow][playerCol] == 4) {
+                    breakCount--;
+                }
+                maze[playerRow][playerCol] = 5;
+            }
           break;
         case SDLK_d:
-          if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0) {
-            maze[playerRow][playerCol] = 1;
-            playerCol++;
-            maze[playerRow][playerCol] = 5;
-          }
-          break;
+         if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0) {
+                if (maze[playerRow][playerCol + 1] == 4) {
+                    if (breakCount > 0) {
+                        breakCount--;
+                        maze[playerRow][playerCol + 1] = 1;
+                    } else {
+                        break;
+                    }
+                }
+                maze[playerRow][playerCol] = 1;
+                playerCol++;
+                if (maze[playerRow][playerCol] == 2) {
+                    int randomScore = rand() % 3 + 1;
+                    score += randomScore;
+                } else if (maze[playerRow][playerCol] == 3) {
+                    hiddenCount++;
+                    breakCount ++;
+                } else if (maze[playerRow][playerCol] == 4) {
+                    breakCount--;
+                }
+                maze[playerRow][playerCol] = 5;
+            }
+            break;
       }
     }
   }
   renderMaze(maze, player, nullptr, nullptr, renderer); // Vẽ lại mê cung sau khi di chuyển người chơi
   SDL_RenderPresent(renderer); // Hiển thị lên màn hình
   SDL_Delay(100); // Đợi một chút để tránh di chuyển quá nhanh
-}
-
-// Tìm một ô trống ở cuối mê cung để làm đích
-std::pair<int, int> FindMostChallengingPosition() {
-    int maxDifficulty = 0; // Độ khó tối đa
-    std::pair<int, int> mostChallengingPosition = std::make_pair(0, 0); // Vị trí khó tìm thấy nhất
-
-    // Duyệt qua mỗi ô trong mê cung
-    for (int i = 1; i < ROWS - 1; i++) {
-        for (int j = 1; j < COLUMNS - 1; j++) {
-            // Nếu ô hiện tại là trống và không phải là tường
-            if (maze[i][j] == 1) {
-                // Tính độ khó của ô hiện tại bằng cách đếm số lượng ô trống xung quanh
-                int difficulty = 0;
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        // Bỏ qua ô hiện tại
-                        if (dx != 0 || dy != 0) {
-                            if (maze[i + dx][j + dy] == 0) {
-                                difficulty++; // Tăng độ khó nếu ô xung quanh trống
-                            }
-                        }
-                    }
-                }
-
-                // So sánh với độ khó tối đa hiện tại
-                if (difficulty > maxDifficulty) {
-                    maxDifficulty = difficulty;
-                    mostChallengingPosition = std::make_pair(i, j); // Lưu vị trí ô có độ khó cao nhất
-                }
-            }
-        }
-    }
-
-    return mostChallengingPosition; // Trả về vị trí ô có độ khó cao nhất
 }
 
 // Tìm một ô trống ở cuối mê cung

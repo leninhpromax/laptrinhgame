@@ -60,10 +60,9 @@ int main(int argc, char *argv[]) {
   int endRow = endPosition.first;
   int endCol = endPosition.second;
   maze[endRow][endCol] = 6;
-  std::pair<int, int> endPosition1 = FindMostChallengingPosition();
-  int endRow1 = endPosition1.first;
-  int endCol1 = endPosition1.second;
-  maze[endRow1][endCol1] = 7;
+  int score = 0;
+  int breakCount = 5;
+  int hiddenCount = 0;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -76,9 +75,10 @@ int main(int argc, char *argv[]) {
   // Chương trình sẽ chạy cho đến khi người chơi chạm đến điểm kết thúc hoặc thoát chương trình
   while (maze[playerRow][playerCol] != 6) {
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, maze, renderer, player);
+    movePlayer(playerRow, playerCol, score, breakCount, hiddenCount, maze, renderer, player);
   }
 
+  if (maze[playerRow][playerCol] == 6){
   // Hiển thị thông báo chiến thắng
   SDL_Rect winRect = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 100};
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
   // Chờ 5 giây trước khi thoát chương trình
   SDL_Delay(5000);
   waitUntilKeyPressed();
+  }
 
   // Giải phóng bộ nhớ và đóng SDL
   SDL_DestroyTexture(player);

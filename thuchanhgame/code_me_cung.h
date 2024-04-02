@@ -31,9 +31,7 @@ void FixMazeError(std::vector<std::vector<int>>& maze);
 void BreakWalls(std::vector<std::vector<int>>& maze);
 
 // Hàm di chuyển người chơi
-void movePlayer(int& playerRow, int& playerCol, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player);
-
-std::pair<int, int> FindMostChallengingPosition();
+void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player);
 
 // Hàm tìm một ô trống ở cuối mê cung làm đích
 std::pair<int, int> FindEmptySpace();
