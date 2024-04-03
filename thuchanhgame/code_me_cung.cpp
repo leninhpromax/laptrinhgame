@@ -23,36 +23,27 @@ void CreateMaze(std::vector<std::vector<int>>& maze) {
 void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
     // Khởi tạo thiết bị tạo số ngẫu nhiên
     std::random_device rd;
-
     // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister
     std::mt19937 gen(rd());
-
     // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
-
     // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
     int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 75;
-
     // Đảm bảo ít nhất một ô tường được tạo ra
     numWalls = std::max(numWalls, 1);
-
     // Số lượng ô tường đã được tạo
     int wallCount = 0;
-
     // Lặp lại để tạo các ô tường ngẫu nhiên
     while (wallCount < numWalls) {
         // Tạo chỉ số ngẫu nhiên trong phạm vi mảng
         int index = dist(gen);
-
         // Tính vị trí hàng và cột từ chỉ số
         int row = index / COLUMNS;
         int column = index % COLUMNS;
-
         // Kiểm tra ô hợp lệ (trống và nằm trong giới hạn mê cung)
         if (maze[row][column] == 1 && row > 0 && row < ROWS - 1 && column > 0 && column < COLUMNS - 1) {
             // Chọn hướng ngẫu nhiên (ngang = 0, dọc = 1)
             int direction = gen() % 2;
-
             // Độ dài ban đầu của ô tường
             int wall_length = 1;
 
@@ -64,10 +55,8 @@ void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
                 if (row + 5 >= ROWS)
                     continue;
             }
-
             // Biến cờ xác định vị trí đặt hợp lệ
             bool valid_placement = true;
-
             // Lặp lại để mở rộng ô tường cho đến khi đạt độ dài tối đa hoặc gặp chướng ngại vật
             while (wall_length < 5 && valid_placement) {
                 // Xác định hướng mở rộng
@@ -87,7 +76,6 @@ void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
                     }
                 }
             }
-
             // Tạo ô tường hợp lệ
             if (valid_placement) {
                 // Lặp lại để đặt các ô theo chiều dài ô tường
@@ -165,11 +153,8 @@ void FixMazeError(std::vector<std::vector<int>>& maze) {
     int j = 1;
     for (int di = 0; di <= 2; di++) {
         for (int dj = 0; dj <= 2; dj++) {
-            // Kiểm tra xem truy cập có vượt ra ngoài giới hạn không
-            if (i + di < maze.size() && j + dj < maze[i].size()) {
                 maze[i + di][j + dj] = 1;
             }
-        }
     }
     // Đánh dấu các cạnh của mê cung thành tường
         for (int i = 0; i < ROWS; i++) {
@@ -206,13 +191,13 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
     }
 }
 // Hàm để di chuyển người chơi trong mê cung
-void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player) {
+void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt) {
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_w:
-          if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0) {
+          if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0 && maze[playerRow - 1][playerCol] != 6 && blood > 0) {
                 if (maze[playerRow - 1][playerCol] == 4) {
                     if (breakCount > 0) {
                         breakCount--;
@@ -228,15 +213,36 @@ void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     hiddenCount++;
-                    breakCount ++;
+                    int hidden = rand()%4 + 1;
+                    if (hidden == 1){
+                        score ++;
+                    }
+                    else if (hidden == 2){
+                        breakCount ++;
+                    }
+                    else if (hidden == 3){
+                        int mau = (rand()%10 + 1)*10;
+                        blood -= mau;
+                    }
+                    else {
+                        if (blood <= 450 && blood > 0){
+                        blood += 50;
+                        }
+                        else {
+                            blood = 500;
+                        }
+                    }
                 } else if (maze[playerRow][playerCol] == 4) {
                     breakCount--;
                 }
                 maze[playerRow][playerCol] = 5;
             }
+            else if (maze[playerRow][playerCol - 1] == 6 || blood <= 0){
+                kt = true;
+            }
             break;
         case SDLK_s:
-         if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0) {
+         if (playerRow < ROWS - 1 && maze[playerRow + 1][playerCol] != 0 && maze[playerRow + 1][playerCol] != 6) {
                 if (maze[playerRow + 1][playerCol] == 4) {
                     if (breakCount > 0) {
                         breakCount--;
@@ -251,16 +257,37 @@ void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                     int randomScore = rand() % 3 + 1;
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
-                    hiddenCount++;
-                    breakCount ++;
+                     hiddenCount++;
+                    int hidden = rand()%4 + 1;
+                    if (hidden == 1){
+                        score ++;
+                    }
+                    else if (hidden == 2){
+                        breakCount ++;
+                    }
+                    else if (hidden == 3){
+                        int mau = (rand()%10 + 1)*10;
+                        blood -= mau;
+                    }
+                    else {
+                        if (blood <= 450 && blood > 0){
+                        blood += 50;
+                        }
+                        else {
+                            blood = 500;
+                        }
+                    }
                 } else if (maze[playerRow][playerCol] == 4) {
                     breakCount--;
                 }
                 maze[playerRow][playerCol] = 5;
             }
+           else if (maze[playerRow + 1][playerCol] == 6 || blood <= 0){
+                kt = true;
+            }
             break;
         case SDLK_a:
-           if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0) {
+           if (playerCol > 0 && maze[playerRow][playerCol - 1] != 0 && maze[playerRow][playerCol - 1] != 6) {
                 if (maze[playerRow][playerCol - 1] == 4) {
                     if (breakCount > 0) {
                         breakCount--;
@@ -276,15 +303,36 @@ void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     hiddenCount++;
-                    breakCount ++;
+                    int hidden = rand()%4 + 1;
+                    if (hidden == 1){
+                        score ++;
+                    }
+                    else if (hidden == 2){
+                        breakCount ++;
+                    }
+                    else if (hidden == 3){
+                        int mau = (rand()%10 + 1)*10;
+                        blood -= mau;
+                    }
+                    else {
+                        if (blood <= 450 && blood > 0){
+                        blood += 50;
+                        }
+                        else {
+                            blood = 500;
+                        }
+                    }
                 } else if (maze[playerRow][playerCol] == 4) {
                     breakCount--;
                 }
                 maze[playerRow][playerCol] = 5;
             }
+            else if (maze[playerRow][playerCol - 1] == 6 || blood <= 0){
+                kt = true;
+            }
           break;
         case SDLK_d:
-         if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0) {
+         if (playerCol < COLUMNS - 1 && maze[playerRow][playerCol + 1] != 0 && maze[playerRow][playerCol + 1] != 6) {
                 if (maze[playerRow][playerCol + 1] == 4) {
                     if (breakCount > 0) {
                         breakCount--;
@@ -300,11 +348,32 @@ void movePlayer(int& playerRow, int& playerCol, int& score, int& breakCount, int
                     score += randomScore;
                 } else if (maze[playerRow][playerCol] == 3) {
                     hiddenCount++;
-                    breakCount ++;
+                    int hidden = rand()%4 + 1;
+                    if (hidden == 1){
+                        score ++;
+                    }
+                    else if (hidden == 2){
+                        breakCount ++;
+                    }
+                    else if (hidden == 3){
+                        int mau = (rand()%10 + 1)*10;
+                        blood -= mau;
+                    }
+                    else {
+                        if (blood <= 450 && blood > 0){
+                        blood += 50;
+                        }
+                        else {
+                            blood = 500;
+                        }
+                    }
                 } else if (maze[playerRow][playerCol] == 4) {
                     breakCount--;
                 }
                 maze[playerRow][playerCol] = 5;
+            }
+            else if (maze[playerRow][playerCol + 1] == 6 || blood <= 0){
+                kt = true;
             }
             break;
       }
@@ -354,7 +423,7 @@ void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Tex
                 renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra điểm thưởng
             } else if (maze[i][j] == 3) {
                 SDL_Rect hiddenRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn có thể được cộng điểm phá tường , điểm hoặc sẽ gặp phải bom nổ gây mất từ 100 đến 200 máu
                 SDL_RenderFillRect(renderer, &hiddenRect);
             } else if (maze[i][j] == 4) {
                 SDL_Rect secretGateRect = {16 * j, 16 * i, 16, 16};
@@ -362,10 +431,6 @@ void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Tex
                 SDL_RenderFillRect(renderer, &secretGateRect);
             } else if (maze[i][j] == 5) {
                 renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
-            } else if (maze[i][j] == 7) {
-                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Màu trắng cho ô có tường
-                SDL_RenderFillRect(renderer, &wallRect);
             }
         }
     }

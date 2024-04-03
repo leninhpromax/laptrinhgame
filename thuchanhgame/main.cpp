@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <iostream>
 #include <ctime>
 #include "man_hinh.h"
@@ -63,6 +64,8 @@ int main(int argc, char *argv[]) {
   int score = 0;
   int breakCount = 5;
   int hiddenCount = 0;
+  int blood = 500;
+  bool kt = false;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -73,9 +76,10 @@ int main(int argc, char *argv[]) {
   SDL_RenderPresent(renderer);
 
   // Chương trình sẽ chạy cho đến khi người chơi chạm đến điểm kết thúc hoặc thoát chương trình
-  while (maze[playerRow][playerCol] != 6) {
+  while (kt == false) {
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, score, breakCount, hiddenCount, maze, renderer, player);
+    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt);
+    std::cout << blood << std::endl;
   }
 
   if (maze[playerRow][playerCol] == 6){
@@ -84,12 +88,11 @@ int main(int argc, char *argv[]) {
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
   SDL_RenderFillRect(renderer, &winRect);
   SDL_RenderCopy(renderer, target, NULL, &winRect);
-
-  // Chờ 5 giây trước khi thoát chương trình
-  SDL_Delay(5000);
-  waitUntilKeyPressed();
   }
 
+  // Chờ 2,5 giây trước khi thoát chương trình
+  SDL_Delay(2500);
+  waitUntilKeyPressed();
   // Giải phóng bộ nhớ và đóng SDL
   SDL_DestroyTexture(player);
   SDL_DestroyTexture(target);
