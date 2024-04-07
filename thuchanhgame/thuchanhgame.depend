@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1712488627 source:d:\game\thuchanhgame\main.cpp
+1712490537 source:d:\game\thuchanhgame\main.cpp
 	<bits/stdc++.h>
 	<iostream>
 	<ctime>
@@ -7,7 +7,7 @@
 	"code_me_cung.h"
 	"time.h"
 
-1712488604 d:\game\thuchanhgame\code_me_cung.h
+1712490759 d:\game\thuchanhgame\code_me_cung.h
 	<bits/stdc++.h>
 	<iostream>
 	<vector>
@@ -19,7 +19,7 @@
 	"man_hinh.h"
 	"time.h"
 
-1712489451 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712490537 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>

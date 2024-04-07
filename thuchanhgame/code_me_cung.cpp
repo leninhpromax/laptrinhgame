@@ -200,7 +200,6 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
       switch (e.key.keysym.sym) {
       case SDL_QUIT:
          kt = true;
-         clearScreenAndShowScore(renderer, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
          break;
         case SDLK_p:
          if (myTimer.is_paused()) {
@@ -449,18 +448,22 @@ void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Tex
     }
 }
 
-void clearScreenAndShowScore(SDL_Renderer* renderer, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
+void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
     // Xóa màn hình
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     // Tính thời gian đã chơi
-    float gameTimeInSeconds = myTimer.get_ticks() / 1000.f;
+    float TimeInSeconds = myTimer.get_ticks() / 1000.f;
 
     // Hiển thị điểm số và thời gian chơi
     std::stringstream scoreText;
-    scoreText << "Your score: " << gameTimeInSeconds << " seconds";
+    scoreText << "Your score: " << score << " seconds";
     renderText(renderer, font, scoreText.str().c_str(), (SCREEN_WIDTH - 200) / 2, (SCREEN_HEIGHT - 100) / 2);
+
+    std::stringstream timeText;
+    timeText << "Time: " << TimeInSeconds << " seconds";
+    renderText(renderer, font, timeText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 300) / 2);
 
     // Hiển thị lên màn hình
     SDL_RenderPresent(renderer);

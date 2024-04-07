@@ -126,7 +126,7 @@ if (font == nullptr) {
     // Di chuyển người chơi
     movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt);
   }
-  clearScreenAndShowScore(renderer, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
+  clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Chờ 2,5 giây trước khi thoát chương trình
   SDL_Delay(2500);

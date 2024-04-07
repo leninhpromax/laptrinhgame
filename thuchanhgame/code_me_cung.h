@@ -40,7 +40,7 @@ std::pair<int, int> FindEmptySpace();
 // Hàm vẽ mê cung
 void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer);
 
-void clearScreenAndShowScore(SDL_Renderer* renderer, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
+void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;
