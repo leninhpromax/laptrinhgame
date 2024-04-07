@@ -81,7 +81,7 @@ if (font == nullptr) {
   bool kt = false;
    Timer myTimer;
    myTimer.start();
-   bool paused = false;
+   bool pause = false;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -99,32 +99,8 @@ if (font == nullptr) {
     // Hiển thị mê cung và người chơi
     renderMaze(maze, player, target, target2, renderer);
 
-    // Hiển thị thời gian
-    std::stringstream time;
-    time << "Timer: " << myTimer.get_ticks() / 1000.f;
-    renderText(renderer, font, time.str().c_str(), 850, 100);
-
-    std::stringstream bloodString;
-     bloodString << "Blood: " << blood;
-    // Vẽ bloodString lên renderer
-    renderText(renderer, font, bloodString.str().c_str(), 850, 150);
-
-    std::stringstream scoreString;
-     scoreString << "Score: " << score;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, scoreString.str().c_str(), 850, 200);
-
-     std::stringstream hiddenCountString;
-     hiddenCountString << "hiddenCount: " << hiddenCount;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, hiddenCountString.str().c_str(), 850, 250);
-
-     std::stringstream breakCountString;
-     breakCountString << "breakCount: " << breakCount;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, breakCountString.str().c_str(), 850, 300);
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt, paused, myTimer);
+    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt, pause, myTimer);
   }
   myTimer.stop();
   clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);

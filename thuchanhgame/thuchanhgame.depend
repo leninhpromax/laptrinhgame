@@ -7,7 +7,7 @@
 	"code_me_cung.h"
 	"time.h"
 
-1712490759 d:\game\thuchanhgame\code_me_cung.h
+1712495493 d:\game\thuchanhgame\code_me_cung.h
 	<bits/stdc++.h>
 	<iostream>
 	<vector>
@@ -19,7 +19,7 @@
 	"man_hinh.h"
 	"time.h"
 
-1712493031 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712495493 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
@@ -845,10 +845,10 @@
 	"begin_code.h"
 	"close_code.h"
 
-1712490059 source:d:\game\thuchanhgame\time.cpp
+1712495493 source:d:\game\thuchanhgame\time.cpp
 	"time.h"
 
-1712489648 d:\game\thuchanhgame\time.h
+1712495932 d:\game\thuchanhgame\time.h
 	"man_hinh.h"
 	<iostream>
 	<string>

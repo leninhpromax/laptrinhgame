@@ -191,9 +191,9 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
     }
 }
 
-void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& paused, Timer& myTimer) {
+void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& pause, Timer& myTimer) {
   SDL_Event e;
-  if (!paused){
+  if (!pause){
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
@@ -201,7 +201,7 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
           kt = true;
           break;
         case SDLK_q:
-            paused = true;
+            pause = true;
             myTimer.pause();
           break;
         case SDLK_w:
@@ -396,14 +396,40 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
           kt = true;
           break;
         case SDLK_q:
-            paused = false;
+            pause = false;
             myTimer.unpause();
           break;
   }
     }
     }
   }
+
   renderMaze(maze, player, nullptr, nullptr, renderer); // Vẽ lại mê cung sau khi di chuyển người chơi
+  // Hiển thị thời gian
+    std::stringstream time;
+    time << "Timer: " << myTimer.get_ticks() / 1000.f;
+    renderText(renderer, font, time.str().c_str(), 850, 100);
+
+    std::stringstream bloodString;
+     bloodString << "Blood: " << blood;
+    // Vẽ bloodString lên renderer
+    renderText(renderer, font, bloodString.str().c_str(), 850, 150);
+
+    std::stringstream scoreString;
+     scoreString << "Score: " << score;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, scoreString.str().c_str(), 850, 200);
+
+     std::stringstream hiddenCountString;
+     hiddenCountString << "hiddenCount: " << hiddenCount;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, hiddenCountString.str().c_str(), 850, 250);
+
+     std::stringstream breakCountString;
+     breakCountString << "breakCount: " << breakCount;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, breakCountString.str().c_str(), 850, 300);
+
   SDL_RenderPresent(renderer); // Hiển thị lên màn hình
   SDL_Delay(10); // Đợi một chút để tránh di chuyển quá nhanh
 }
