@@ -10,6 +10,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "man_hinh.h"
+#include "time.h"
 
 const int ROWS = 50; // Số hàng của mê cung
 const int COLUMNS = 50; // Số cột của mê cung
@@ -38,6 +39,8 @@ std::pair<int, int> FindEmptySpace();
 
 // Hàm vẽ mê cung
 void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer);
+
+void clearScreenAndShowScore(SDL_Renderer* renderer, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;

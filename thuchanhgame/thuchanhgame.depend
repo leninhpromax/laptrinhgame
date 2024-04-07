@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1712454564 source:d:\game\thuchanhgame\main.cpp
+1712488627 source:d:\game\thuchanhgame\main.cpp
 	<bits/stdc++.h>
 	<iostream>
 	<ctime>
@@ -7,7 +7,7 @@
 	"code_me_cung.h"
 	"time.h"
 
-1712114683 d:\game\thuchanhgame\code_me_cung.h
+1712488604 d:\game\thuchanhgame\code_me_cung.h
 	<bits/stdc++.h>
 	<iostream>
 	<vector>
@@ -17,8 +17,9 @@
 	<ctime>
 	<cstdlib>
 	"man_hinh.h"
+	"time.h"
 
-1712130876 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712489451 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
@@ -28,6 +29,7 @@
 	<SDL.h>
 	<SDL_image.h>
 	"code_me_cung.h"
+	"time.h"
 
 1712070603 d:\game\thuchanhgame\man_hinh.h
 	<SDL.h>
@@ -843,14 +845,14 @@
 	"begin_code.h"
 	"close_code.h"
 
-1712454758 source:d:\game\thuchanhgame\time.cpp
+1712490059 source:d:\game\thuchanhgame\time.cpp
 	"time.h"
-	<iostream>
 
-1712454758 d:\game\thuchanhgame\time.h
+1712489648 d:\game\thuchanhgame\time.h
 	"man_hinh.h"
 	<iostream>
 	<string>
 	<sstream>
 	<SDL_ttf.h>
+	<SDL.h>
 

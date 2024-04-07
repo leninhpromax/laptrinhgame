@@ -50,12 +50,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-  font = TTF_OpenFont("font.ttf", 24);
+  font = TTF_OpenFont("font.ttf", 28);
 if (font == nullptr) {
     std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
     // Xử lý lỗi ở đây, có thể là thoát chương trình hoặc sử dụng một font mặc định khác
 }
-
 
   // Khởi tạo mê cung và tạo các điểm thưởng, tường, cổng bí mật
   std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0));
@@ -80,7 +79,8 @@ if (font == nullptr) {
   int hiddenCount = 0;
   int blood = 500;
   bool kt = false;
-  Timer myTimer;
+   Timer myTimer;
+   myTimer.start();
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -92,27 +92,6 @@ if (font == nullptr) {
 
   // Chương trình sẽ chạy cho đến khi người chơi chạm đến điểm kết thúc hoặc thoát chương trình
   while (kt == false) {
-    while (SDL_PollEvent(&event1)) {
-            if (event1.type == SDL_KEYDOWN) {
-                if (event1.key.keysym.sym == SDLK_q) {
-                    if (myTimer.is_started()) {
-                        myTimer.stop();
-                    } else {
-                        myTimer.start();
-                    }
-                }
-                if (event1.key.keysym.sym == SDLK_p) {
-                    if (myTimer.is_paused()) {
-                        myTimer.unpause();
-                    } else {
-                        myTimer.pause();
-                    }
-                }
-            } else if (event1.type == SDL_QUIT) {
-                kt = true;
-            }
-        }
-
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
 
@@ -122,23 +101,32 @@ if (font == nullptr) {
     // Hiển thị thời gian
     std::stringstream time;
     time << "Timer: " << myTimer.get_ticks() / 1000.f;
-    renderText(renderer, font, time.str().c_str(), 800, 400);
-    // Hiển thị lên màn hình
-    SDL_RenderPresent(renderer);
+    renderText(renderer, font, time.str().c_str(), 850, 100);
 
+    std::stringstream bloodString;
+     bloodString << "Blood: " << blood;
+    // Vẽ bloodString lên renderer
+    renderText(renderer, font, bloodString.str().c_str(), 850, 150);
+
+    std::stringstream scoreString;
+     scoreString << "Score: " << score;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, scoreString.str().c_str(), 850, 200);
+
+     std::stringstream hiddenCountString;
+     hiddenCountString << "hiddenCount: " << hiddenCount;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, hiddenCountString.str().c_str(), 850, 250);
+
+     std::stringstream breakCountString;
+     breakCountString << "breakCount: " << breakCount;
+    // Vẽ scoreString lên renderer
+    renderText(renderer, font, breakCountString.str().c_str(), 850, 300);
 
     // Di chuyển người chơi
     movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt);
-    std::cout << blood << std::endl;
   }
-
-  if (maze[playerRow][playerCol] == 6){
-  // Hiển thị thông báo chiến thắng
-  SDL_Rect winRect = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 100};
-  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-  SDL_RenderFillRect(renderer, &winRect);
-  SDL_RenderCopy(renderer, target, NULL, &winRect);
-  }
+  clearScreenAndShowScore(renderer, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Chờ 2,5 giây trước khi thoát chương trình
   SDL_Delay(2500);

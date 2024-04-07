@@ -7,6 +7,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "code_me_cung.h"
+#include "time.h"
 
 std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0)); // Mảng lưu trữ mê cung
 
@@ -189,12 +190,25 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
         }
     }
 }
+
 // Hàm để di chuyển người chơi trong mê cung
 void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt) {
   SDL_Event e;
+  Timer myTimer;
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
+      case SDL_QUIT:
+         kt = true;
+         clearScreenAndShowScore(renderer, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
+         break;
+        case SDLK_p:
+         if (myTimer.is_paused()) {
+                        myTimer.unpause();
+                    } else {
+                        myTimer.pause();
+                    }
+                    break;
         case SDLK_w:
           if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0 && maze[playerRow - 1][playerCol] != 6 && blood > 0) {
                 if (maze[playerRow - 1][playerCol] == 4) {
@@ -434,3 +448,21 @@ void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Tex
         }
     }
 }
+
+void clearScreenAndShowScore(SDL_Renderer* renderer, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
+    // Xóa màn hình
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Tính thời gian đã chơi
+    float gameTimeInSeconds = myTimer.get_ticks() / 1000.f;
+
+    // Hiển thị điểm số và thời gian chơi
+    std::stringstream scoreText;
+    scoreText << "Your score: " << gameTimeInSeconds << " seconds";
+    renderText(renderer, font, scoreText.str().c_str(), (SCREEN_WIDTH - 200) / 2, (SCREEN_HEIGHT - 100) / 2);
+
+    // Hiển thị lên màn hình
+    SDL_RenderPresent(renderer);
+}
+
