@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1712114142 source:d:\game\thuchanhgame\main.cpp
+1712454564 source:d:\game\thuchanhgame\main.cpp
 	<bits/stdc++.h>
 	<iostream>
 	<ctime>
 	"man_hinh.h"
 	"code_me_cung.h"
+	"time.h"
 
 1712114683 d:\game\thuchanhgame\code_me_cung.h
 	<bits/stdc++.h>
@@ -17,7 +18,8 @@
 	<cstdlib>
 	"man_hinh.h"
 
-1712114493 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712130876 source:d:\game\thuchanhgame\code_me_cung.cpp
+	<chrono>
 	<algorithm>
 	<random>
 	<ctime>
@@ -32,7 +34,7 @@
 	<SDL_image.h>
 	<iostream>
 
-1712114563 source:d:\game\thuchanhgame\man_hinh.cpp
+1712454373 source:d:\game\thuchanhgame\man_hinh.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>
@@ -835,4 +837,20 @@
 	"SDL_version.h"
 	"begin_code.h"
 	"close_code.h"
+
+1705848815 c:\sdl2.dll\sdl2_ttf-devel-2.22.0-mingw\sdl2_ttf-2.22.0\i686-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1712454758 source:d:\game\thuchanhgame\time.cpp
+	"time.h"
+	<iostream>
+
+1712454758 d:\game\thuchanhgame\time.h
+	"man_hinh.h"
+	<iostream>
+	<string>
+	<sstream>
+	<SDL_ttf.h>
 

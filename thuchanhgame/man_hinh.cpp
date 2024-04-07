@@ -4,7 +4,7 @@
 #include <iostream>
 #include "man_hinh.h"
 
-const int SCREEN_WIDTH = 800;
+const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
 const char* WINDOW_TITLE = "Game";
 

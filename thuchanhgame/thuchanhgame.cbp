@@ -54,6 +54,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="man_hinh.cpp" />
 		<Unit filename="man_hinh.h" />
+		<Unit filename="time.cpp" />
+		<Unit filename="time.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

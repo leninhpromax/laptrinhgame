@@ -3,6 +3,7 @@
 #include <ctime>
 #include "man_hinh.h"
 #include "code_me_cung.h"
+#include "time.h"
 
 // Hàm main
 int main(int argc, char *argv[]) {
@@ -43,6 +44,19 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  if (TTF_Init() == -1) {
+        std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        quitSDL(window, renderer);
+        return 1;
+    }
+
+  font = TTF_OpenFont("font.ttf", 24);
+if (font == nullptr) {
+    std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
+    // Xử lý lỗi ở đây, có thể là thoát chương trình hoặc sử dụng một font mặc định khác
+}
+
+
   // Khởi tạo mê cung và tạo các điểm thưởng, tường, cổng bí mật
   std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0));
   srand(time(nullptr));
@@ -66,6 +80,7 @@ int main(int argc, char *argv[]) {
   int hiddenCount = 0;
   int blood = 500;
   bool kt = false;
+  Timer myTimer;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -77,6 +92,41 @@ int main(int argc, char *argv[]) {
 
   // Chương trình sẽ chạy cho đến khi người chơi chạm đến điểm kết thúc hoặc thoát chương trình
   while (kt == false) {
+    while (SDL_PollEvent(&event1)) {
+            if (event1.type == SDL_KEYDOWN) {
+                if (event1.key.keysym.sym == SDLK_q) {
+                    if (myTimer.is_started()) {
+                        myTimer.stop();
+                    } else {
+                        myTimer.start();
+                    }
+                }
+                if (event1.key.keysym.sym == SDLK_p) {
+                    if (myTimer.is_paused()) {
+                        myTimer.unpause();
+                    } else {
+                        myTimer.pause();
+                    }
+                }
+            } else if (event1.type == SDL_QUIT) {
+                kt = true;
+            }
+        }
+
+    // Vẽ hình nền lên renderer
+    SDL_RenderCopy(renderer, background, NULL, NULL);
+
+    // Hiển thị mê cung và người chơi
+    renderMaze(maze, player, target, target2, renderer);
+
+    // Hiển thị thời gian
+    std::stringstream time;
+    time << "Timer: " << myTimer.get_ticks() / 1000.f;
+    renderText(renderer, font, time.str().c_str(), 800, 400);
+    // Hiển thị lên màn hình
+    SDL_RenderPresent(renderer);
+
+
     // Di chuyển người chơi
     movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt);
     std::cout << blood << std::endl;
@@ -98,6 +148,8 @@ int main(int argc, char *argv[]) {
   SDL_DestroyTexture(target);
   SDL_DestroyTexture(background);
   SDL_DestroyTexture(target2);
+  TTF_CloseFont(font);
+  TTF_Quit();
   quitSDL(window, renderer);
 
   return 0;

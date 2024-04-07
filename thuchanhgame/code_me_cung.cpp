@@ -1,4 +1,4 @@
-#pragma once
+#include <chrono>
 #include <algorithm>
 #include <random>
 #include <ctime>
@@ -21,10 +21,9 @@ void CreateMaze(std::vector<std::vector<int>>& maze) {
 
 // Tạo tường ngẫu nhiên trong mê cung
 void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
-    // Khởi tạo thiết bị tạo số ngẫu nhiên
-    std::random_device rd;
+    std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
     // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister
-    std::mt19937 gen(rd());
+    std::mt19937 gen(tp.time_since_epoch().count());
     // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
     // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
