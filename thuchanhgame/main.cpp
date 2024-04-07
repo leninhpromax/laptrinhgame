@@ -81,6 +81,7 @@ if (font == nullptr) {
   bool kt = false;
    Timer myTimer;
    myTimer.start();
+   bool paused = false;
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
@@ -122,10 +123,10 @@ if (font == nullptr) {
      breakCountString << "breakCount: " << breakCount;
     // Vẽ scoreString lên renderer
     renderText(renderer, font, breakCountString.str().c_str(), 850, 300);
-
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt);
+    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt, paused, myTimer);
   }
+  myTimer.stop();
   clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Chờ 2,5 giây trước khi thoát chương trình

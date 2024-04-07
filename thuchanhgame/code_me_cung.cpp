@@ -191,23 +191,19 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
     }
 }
 
-// Hàm để di chuyển người chơi trong mê cung
-void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt) {
+void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& paused, Timer& myTimer) {
   SDL_Event e;
-  Timer myTimer;
+  if (!paused){
   while (SDL_PollEvent(&e) != 0) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
-      case SDL_QUIT:
-         kt = true;
-         break;
-        case SDLK_p:
-         if (myTimer.is_paused()) {
-                        myTimer.unpause();
-                    } else {
-                        myTimer.pause();
-                    }
-                    break;
+     case SDL_QUIT:
+          kt = true;
+          break;
+        case SDLK_q:
+            paused = true;
+            myTimer.pause();
+          break;
         case SDLK_w:
           if (playerRow > 0 && maze[playerRow - 1][playerCol] != 0 && maze[playerRow - 1][playerCol] != 6 && blood > 0) {
                 if (maze[playerRow - 1][playerCol] == 4) {
@@ -391,9 +387,25 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
       }
     }
   }
+  }
+  else{
+    while (SDL_PollEvent(&e) != 0) {
+    if (e.type == SDL_KEYDOWN) {
+      switch (e.key.keysym.sym) {
+     case SDL_QUIT:
+          kt = true;
+          break;
+        case SDLK_q:
+            paused = false;
+            myTimer.unpause();
+          break;
+  }
+    }
+    }
+  }
   renderMaze(maze, player, nullptr, nullptr, renderer); // Vẽ lại mê cung sau khi di chuyển người chơi
   SDL_RenderPresent(renderer); // Hiển thị lên màn hình
-  SDL_Delay(100); // Đợi một chút để tránh di chuyển quá nhanh
+  SDL_Delay(10); // Đợi một chút để tránh di chuyển quá nhanh
 }
 
 // Tìm một ô trống ở cuối mê cung
