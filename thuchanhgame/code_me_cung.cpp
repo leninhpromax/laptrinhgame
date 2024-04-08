@@ -28,7 +28,7 @@ void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
     // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
     // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
-    int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 75;
+    int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 60;
     // Đảm bảo ít nhất một ô tường được tạo ra
     numWalls = std::max(numWalls, 1);
     // Số lượng ô tường đã được tạo
@@ -404,7 +404,7 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
     }
   }
 
-  renderMaze(maze, player, nullptr, nullptr, renderer); // Vẽ lại mê cung sau khi di chuyển người chơi
+  renderMaze(maze, player, nullptr, nullptr, renderer, playerRow, playerCol); // Vẽ lại mê cung sau khi di chuyển người chơi
   // Hiển thị thời gian
     std::stringstream time;
     time << "Timer: " << myTimer.get_ticks() / 1000.f;
@@ -453,37 +453,67 @@ std::pair<int, int> FindEmptySpace() {
   return std::make_pair(ROWS-2, COLUMNS-2);
 }
 
-// Khai báo hàm mới để vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze,SDL_Texture* player, SDL_Texture* target,SDL_Texture* target2, SDL_Renderer* renderer) {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLUMNS; j++) {
-            if (maze[i][j] == 6) {
-                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Màu  cho ô có tường
-                SDL_RenderFillRect(renderer, &wallRect);
-            } else if (maze[i][j] == 0) {
-                SDL_Rect wallRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
-                SDL_RenderFillRect(renderer, &wallRect);
-            } else if (maze[i][j] == 1) {
-                SDL_Rect emptyRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
-                SDL_RenderFillRect(renderer, &emptyRect);
-            } else if (maze[i][j] == 2) {
-                renderTexture(target, 16 * j, 16 * i, 16, 16, renderer); // In ra điểm thưởng
-            } else if (maze[i][j] == 3) {
-                SDL_Rect hiddenRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn có thể được cộng điểm phá tường , điểm hoặc sẽ gặp phải bom nổ gây mất từ 100 đến 200 máu
-                SDL_RenderFillRect(renderer, &hiddenRect);
-            } else if (maze[i][j] == 4) {
-                SDL_Rect secretGateRect = {16 * j, 16 * i, 16, 16};
-                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
-                SDL_RenderFillRect(renderer, &secretGateRect);
-            } else if (maze[i][j] == 5) {
-                renderTexture(player, 16 * j, 16 * i, 16, 16, renderer); // In ra vị trí người chơi
+void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol) {
+ const int VIEW_SIZE = 40; // Kích thước màn hình 35x35 ô
+const int SCREEN_WIDTH = 1200; // Kích thước màn hình là 1200x800
+const int SCREEN_HEIGHT = 800;
+const int CELL_SIZE = 20; // Kích thước của mỗi ô
+const int MAZE_SIZE = 100; // Kích thước mê cung
+
+// Tính toán vị trí camera để người chơi luôn ở giữa màn hình
+int cameraX = playerCol * CELL_SIZE - (SCREEN_WIDTH / 2 - CELL_SIZE / 2);
+int cameraY = playerRow * CELL_SIZE - (SCREEN_HEIGHT / 2 - CELL_SIZE / 2);
+
+// Kiểm tra giới hạn cho cameraX và cameraY để camera không vượt ra khỏi màn hình
+if (cameraX < 0) cameraX = 0;
+if (cameraY < 0) cameraY = 0;
+int maxCameraX = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
+int maxCameraY = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
+
+// Kiểm tra và điều chỉnh cameraX và cameraY nếu vượt quá giới hạn
+if (cameraX > maxCameraX) cameraX = maxCameraX;
+if (cameraY > maxCameraY) cameraY = maxCameraY;
+
+// Vẽ mê cung và người chơi
+for (int i = 0; i < VIEW_SIZE; i++) {
+    for (int j = 0; j < VIEW_SIZE; j++) {
+        int x = j * CELL_SIZE;
+        int y = i * CELL_SIZE;
+        int mazeX = playerCol - VIEW_SIZE / 2 + j;
+        int mazeY = playerRow - VIEW_SIZE / 2 + i;
+        // Kiểm tra xem ô có nằm trong mê cung không
+        if (mazeX >= 0 && mazeX < MAZE_SIZE && mazeY >= 0 && mazeY < MAZE_SIZE) {
+            SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE}; // Hình chữ nhật đại diện cho ô
+            switch (maze[mazeY][mazeX]) {
+                case 0: // Tường
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
+                    SDL_RenderFillRect(renderer, &rect);
+                    break;
+                case 1: // Ô trống
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
+                    SDL_RenderFillRect(renderer, &rect);
+                    break;
+                case 2: // Điểm thưởng
+                    renderTexture(target, x, y, CELL_SIZE, CELL_SIZE, renderer); // In ra điểm thưởng
+                    break;
+                case 3: // Nơi ẩn
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
+                    SDL_RenderFillRect(renderer, &rect);
+                    break;
+                case 4: // Cổng bí mật
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
+                    SDL_RenderFillRect(renderer, &rect);
+                    break;
+                case 5: // Vị trí người chơi
+                    renderTexture(player, x, y, CELL_SIZE, CELL_SIZE, renderer);
+                    break;
+                // Thêm các trường hợp khác nếu cần
+                default:
+                    break;
             }
         }
     }
+}
 }
 
 void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
@@ -494,10 +524,14 @@ void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTim
     // Tính thời gian đã chơi
     float TimeInSeconds = myTimer.get_ticks() / 1000.f;
 
+    std::stringstream winText;
+    winText << "Win" ;
+    renderText(renderer, font, winText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 400) / 2);
+
     // Hiển thị điểm số và thời gian chơi
     std::stringstream scoreText;
     scoreText << "Your score: " << score << " seconds";
-    renderText(renderer, font, scoreText.str().c_str(), (SCREEN_WIDTH - 200) / 2, (SCREEN_HEIGHT - 100) / 2);
+    renderText(renderer, font, scoreText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 200) / 2);
 
     std::stringstream timeText;
     timeText << "Time: " << TimeInSeconds << " seconds";
@@ -506,4 +540,3 @@ void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTim
     // Hiển thị lên màn hình
     SDL_RenderPresent(renderer);
 }
-

@@ -87,7 +87,7 @@ if (font == nullptr) {
   SDL_RenderCopy(renderer, background, NULL, NULL);
   // Hiển thị mê cung và người chơi
 
-  renderMaze(maze, player, target, target2, renderer);
+  renderMaze(maze, player, target, target2, renderer, playerRow, playerCol);
   // Hiển thị lên màn hình
   SDL_RenderPresent(renderer);
 
@@ -95,15 +95,13 @@ if (font == nullptr) {
   while (kt == false) {
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
-
-    // Hiển thị mê cung và người chơi
-    renderMaze(maze, player, target, target2, renderer);
+    renderMaze(maze, player, target, target2, renderer, playerRow, playerCol);
 
     // Di chuyển người chơi
     movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt, pause, myTimer);
   }
-  myTimer.stop();
   clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
+  myTimer.stop();
 
   // Chờ 2,5 giây trước khi thoát chương trình
   SDL_Delay(2500);

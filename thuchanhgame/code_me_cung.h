@@ -12,8 +12,8 @@
 #include "man_hinh.h"
 #include "time.h"
 
-const int ROWS = 50; // Số hàng của mê cung
-const int COLUMNS = 50; // Số cột của mê cung
+const int ROWS = 100; // Số hàng của mê cung
+const int COLUMNS = 100; // Số cột của mê cung
 const int WALL_RATIO = 5; // Tỷ lệ ô tường
 
 // Hàm tạo mê cung
@@ -38,9 +38,11 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
 std::pair<int, int> FindEmptySpace();
 
 // Hàm vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer);
+void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol);
 
 void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
+
+
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;
