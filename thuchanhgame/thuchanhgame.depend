@@ -19,7 +19,7 @@
 	"man_hinh.h"
 	"time.h"
 
-1712629259 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712659964 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
@@ -38,7 +38,7 @@
 	<sstream>
 	<iostream>
 
-1712539741 source:d:\game\thuchanhgame\man_hinh.cpp
+1712629371 source:d:\game\thuchanhgame\man_hinh.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>
@@ -847,7 +847,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1712495493 source:d:\game\thuchanhgame\time.cpp
+1712629371 source:d:\game\thuchanhgame\time.cpp
 	"time.h"
 
 1712629371 d:\game\thuchanhgame\time.h

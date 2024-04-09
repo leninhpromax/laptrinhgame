@@ -454,67 +454,124 @@ std::pair<int, int> FindEmptySpace() {
 }
 
 void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol) {
- const int VIEW_SIZE = 40; // Kích thước màn hình 35x35 ô
-const int SCREEN_WIDTH = 1200; // Kích thước màn hình là 1200x800
-const int SCREEN_HEIGHT = 800;
-const int CELL_SIZE = 20; // Kích thước của mỗi ô
-const int MAZE_SIZE = 100; // Kích thước mê cung
+    const int VIEW_SIZE = 40; // Kích thước màn hình 35x35 ô
+    const int SCREEN_WIDTH = 800; // Kích thước màn hình là 1200x800
+    const int SCREEN_HEIGHT = 800;
+    const int CELL_SIZE = 20; // Kích thước của mỗi ô
+    const int MAZE_SIZE = 100; // Kích thước mê cung
 
-// Tính toán vị trí camera để người chơi luôn ở giữa màn hình
-int cameraX = playerCol * CELL_SIZE - (SCREEN_WIDTH / 2 - CELL_SIZE / 2);
-int cameraY = playerRow * CELL_SIZE - (SCREEN_HEIGHT / 2 - CELL_SIZE / 2);
+     // Kiểm tra xem người chơi có nằm trong phạm vi màn hình hiển thị không
+    if (playerRow <= 20 || playerCol <= 20 || playerRow >= MAZE_SIZE - 20 || playerCol >= MAZE_SIZE - 20) {
+    // Tính toán vị trí camera để người chơi luôn ở giữa màn hình
+    int cameraX = playerCol * CELL_SIZE - (SCREEN_WIDTH / 2 - CELL_SIZE / 2);
+    int cameraY = playerRow * CELL_SIZE - (SCREEN_HEIGHT / 2 - CELL_SIZE / 2);
 
-// Kiểm tra giới hạn cho cameraX và cameraY để camera không vượt ra khỏi màn hình
-if (cameraX < 0) cameraX = 0;
-if (cameraY < 0) cameraY = 0;
-int maxCameraX = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
-int maxCameraY = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
+    // Kiểm tra nếu camera vượt ra ngoài màn hình
+    if (cameraX < 0) cameraX = 0;
+    if (cameraY < 0) cameraY = 0;
+    int maxCameraX = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
+    int maxCameraY = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
+    if (cameraX > maxCameraX) cameraX = maxCameraX;
+    if (cameraY > maxCameraY) cameraY = maxCameraY;
 
-// Kiểm tra và điều chỉnh cameraX và cameraY nếu vượt quá giới hạn
-if (cameraX > maxCameraX) cameraX = maxCameraX;
-if (cameraY > maxCameraY) cameraY = maxCameraY;
+        // Vẽ toàn bộ mê cung và người chơi ở vị trí hiện tại
+        for (int i = 0; i < MAZE_SIZE; i++) {
+            for (int j = 0; j < MAZE_SIZE; j++) {
+                int x = j * CELL_SIZE - cameraX;
+                int y = i * CELL_SIZE - cameraY;
+                // Kiểm tra xem ô có nằm trong màn hình không
+                if (x >= -CELL_SIZE && x <= SCREEN_WIDTH && y >= -CELL_SIZE && y <= SCREEN_HEIGHT) {
+                    SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE};
+                    switch (maze[i][j]) {
+                        case 0: // Tường
+                            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                            SDL_RenderFillRect(renderer, &rect);
+                            break;
+                        case 1: // Ô trống
+                            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                            SDL_RenderFillRect(renderer, &rect);
+                            break;
+                        case 2: // Điểm thưởng
+                            renderTexture(target, x, y, CELL_SIZE, CELL_SIZE, renderer);
+                            break;
+                        case 3: // Nơi ẩn
+                            SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                            SDL_RenderFillRect(renderer, &rect);
+                            break;
+                        case 4: // Cổng bí mật
+                            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+                            SDL_RenderFillRect(renderer, &rect);
+                            break;
+                        case 5: // Vị trí người chơi
+                            renderTexture(player, x, y, CELL_SIZE, CELL_SIZE, renderer);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    } else {
+       const int halfViewSize = VIEW_SIZE / 2;
 
-// Vẽ mê cung và người chơi
-for (int i = 0; i < VIEW_SIZE; i++) {
-    for (int j = 0; j < VIEW_SIZE; j++) {
-        int x = j * CELL_SIZE;
-        int y = i * CELL_SIZE;
-        int mazeX = playerCol - VIEW_SIZE / 2 + j;
-        int mazeY = playerRow - VIEW_SIZE / 2 + i;
+// Tính toán vị trí của người chơi trong mê cung
+int playerX = playerCol * CELL_SIZE;
+int playerY = playerRow * CELL_SIZE;
+
+// Tính toán vị trí của camera để người chơi luôn ở trung tâm màn hình
+int cameraX = playerX - SCREEN_WIDTH / 2;
+int cameraY = playerY - SCREEN_HEIGHT / 2;
+
+// Clamp camera position to stay within maze boundaries
+cameraX = std::max(0, std::min(cameraX, (MAZE_SIZE * CELL_SIZE) - SCREEN_WIDTH));
+cameraY = std::max(0, std::min(cameraY, (MAZE_SIZE * CELL_SIZE) - SCREEN_HEIGHT));
+
+// Vẽ chỉ phần màn hình nhỏ xung quanh người chơi
+for (int i = 0; i < SCREEN_HEIGHT / CELL_SIZE; i++) {
+    for (int j = 0; j < SCREEN_WIDTH / CELL_SIZE; j++) {
+        // Calculate maze coordinates with camera offset
+        int mazeX = (cameraX + j * CELL_SIZE) / CELL_SIZE;
+        int mazeY = (cameraY + i * CELL_SIZE) / CELL_SIZE;
+
+        // Calculate screen coordinates with camera offset
+        int x = j * CELL_SIZE - (cameraX % CELL_SIZE);
+        int y = i * CELL_SIZE - (cameraY % CELL_SIZE);
+
         // Kiểm tra xem ô có nằm trong mê cung không
         if (mazeX >= 0 && mazeX < MAZE_SIZE && mazeY >= 0 && mazeY < MAZE_SIZE) {
-            SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE}; // Hình chữ nhật đại diện cho ô
+            SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE};
             switch (maze[mazeY][mazeX]) {
                 case 0: // Tường
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Màu đỏ cho ô có tường
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
                     SDL_RenderFillRect(renderer, &rect);
                     break;
                 case 1: // Ô trống
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Màu xanh lá cho ô trống
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
                     SDL_RenderFillRect(renderer, &rect);
                     break;
                 case 2: // Điểm thưởng
-                    renderTexture(target, x, y, CELL_SIZE, CELL_SIZE, renderer); // In ra điểm thưởng
+                    renderTexture(target, x, y, CELL_SIZE, CELL_SIZE, renderer);
                     break;
                 case 3: // Nơi ẩn
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Màu vàng cho nơi ẩn
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
                     SDL_RenderFillRect(renderer, &rect);
                     break;
                 case 4: // Cổng bí mật
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu magenta cho cổng bí mật
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
                     SDL_RenderFillRect(renderer, &rect);
                     break;
                 case 5: // Vị trí người chơi
                     renderTexture(player, x, y, CELL_SIZE, CELL_SIZE, renderer);
                     break;
-                // Thêm các trường hợp khác nếu cần
                 default:
                     break;
             }
         }
     }
 }
+    }
 }
+
 
 void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
     // Xóa màn hình
