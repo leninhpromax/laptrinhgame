@@ -8,6 +8,11 @@ const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 800;
 const char* WINDOW_TITLE = "Game";
 
+
+TTF_Font* font = NULL; // Biến toàn cục để lưu trữ font chữ được sử dụng trong chương trình
+
+SDL_Color textColor = { 255, 255, 255 }; // Màu chữ mặc định, sử dụng để hiển thị văn bản
+
 void logErrorAndExit(const char* msg, const char* error)
 {
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
@@ -96,4 +101,28 @@ SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer)
     }
 
     return texture;
+}
+
+void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y) {
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text, textColor); // Tạo surface chứa văn bản
+    if (surface == nullptr) {
+        std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        return;
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface); // Tạo texture từ surface
+    SDL_FreeSurface(surface); // Giải phóng surface
+    if (texture == nullptr) {
+        std::cerr << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH); // Lấy kích thước của texture
+
+    SDL_Rect destRect = { x, y, texW, texH }; // Tạo hình chữ nhật đích
+    SDL_RenderCopy(renderer, texture, NULL, &destRect); // Sao chép texture lên renderer
+
+    SDL_DestroyTexture(texture); // Giải phóng texture
 }
