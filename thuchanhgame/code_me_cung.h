@@ -1,11 +1,11 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include <bits/stdc++.h>
-#include <iostream>
-#include <vector>
+#include <chrono>
 #include <algorithm>
 #include <random>
+#include <iostream>
+#include <vector>
 #include <utility>
 #include <ctime>
 #include <cstdlib>
@@ -14,23 +14,21 @@
 
 const int ROWS = 100; // Số hàng của mê cung
 const int COLUMNS = 100; // Số cột của mê cung
-const int WALL_RATIO = 5; // Tỷ lệ ô tường
 
-// Hàm tạo mê cung
-void CreateMaze(std::vector<std::vector<int>>& maze);
-
-// Hàm tạo tường ngẫu nhiên
-void GenerateRandomWalls(std::vector<std::vector<int>>& maze);
-
-// Hàm tìm vị trí các ô có điểm thưởng
-void FindRewards(std::vector<std::vector<int>>& maze);
-
-// Hàm sửa lỗi mê cung
-void FixMazeError(std::vector<std::vector<int>>& maze);
-
-// Hàm xử lý ô trống không kề tường
-void BreakWalls(std::vector<std::vector<int>>& maze);
-
+class Maze {
+private:
+    std::vector<std::vector<int>> maze;
+public:
+    Maze();
+    std::vector<std::vector<int>>& getMaze();
+    void Create();
+    void GenerateRandomWalls();
+    void Rewards();
+    void FixError();
+    void BreakWalls();
+    std::pair<int, int> EmptySpace();
+    int& Cells(int row, int col);
+};
 // Hàm di chuyển người chơi
 void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& pause, Timer& myTimer);
 
@@ -41,8 +39,6 @@ std::pair<int, int> FindEmptySpace();
 void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol);
 
 void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
-
-
 
 extern SDL_Texture* player;
 extern SDL_Texture* target;

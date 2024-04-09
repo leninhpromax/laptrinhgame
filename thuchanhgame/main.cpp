@@ -57,23 +57,23 @@ if (font == nullptr) {
 }
 
   // Khởi tạo mê cung và tạo các điểm thưởng, tường, cổng bí mật
-  std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0));
-  srand(time(nullptr));
-  CreateMaze(maze);
-  GenerateRandomWalls(maze);
-  FixMazeError(maze);
-  FindRewards(maze);
-  BreakWalls(maze);
+    srand(time(nullptr));
+    Maze mazeG;
+    mazeG.Create();
+    mazeG.GenerateRandomWalls();
+    mazeG.Rewards();
+    mazeG.FixError();
+    mazeG.BreakWalls();
+    std::pair<int, int> Position = mazeG.EmptySpace();
+    int endRow = Position.first;
+    int endCol = Position.second;
+    mazeG.Cells(endRow, endCol) = 6;
 
   // Khởi tạo vị trí ban đầu của người chơi và điểm kết thúc
   int playerRow = 1;
   int playerCol = 1;
-  maze[playerRow][playerCol] = 5;
+  mazeG.Cells(playerRow,playerCol) = 5;
 
-  std::pair<int, int> endPosition = FindEmptySpace();
-  int endRow = endPosition.first;
-  int endCol = endPosition.second;
-  maze[endRow][endCol] = 6;
   int score = 0;
   int breakCount = 5;
   int hiddenCount = 0;
@@ -87,7 +87,7 @@ if (font == nullptr) {
   SDL_RenderCopy(renderer, background, NULL, NULL);
   // Hiển thị mê cung và người chơi
 
-  renderMaze(maze, player, target, target2, renderer, playerRow, playerCol);
+  renderMaze(mazeG.getMaze(), player, target, target2, renderer, playerRow, playerCol);
   // Hiển thị lên màn hình
   SDL_RenderPresent(renderer);
 
@@ -95,10 +95,10 @@ if (font == nullptr) {
   while (kt == false) {
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
-    renderMaze(maze, player, target, target2, renderer, playerRow, playerCol);
+    renderMaze(mazeG.getMaze(), player, target, target2, renderer, playerRow, playerCol);
 
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, maze, renderer, player, kt, pause, myTimer);
+    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, mazeG.getMaze(), renderer, player, kt, pause, myTimer);
   }
   clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
   myTimer.stop();

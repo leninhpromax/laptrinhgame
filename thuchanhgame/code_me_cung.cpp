@@ -9,32 +9,30 @@
 #include "code_me_cung.h"
 #include "time.h"
 
-std::vector<std::vector<int>> maze(ROWS, std::vector<int>(COLUMNS, 0)); // Mảng lưu trữ mê cung
+Maze::Maze() : maze(ROWS, std::vector<int>(COLUMNS, 0)) {}
 
 // Tạo mê cung ban đầu
-void CreateMaze(std::vector<std::vector<int>>& maze) {
+void Maze::Create() {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
-            maze[i][j] = 1; // Gán giá trị 1 cho tất cả các ô trong mê cung, biểu thị cho không gian trống
+            maze[i][j] = 1;
         }
     }
 }
 
 // Tạo tường ngẫu nhiên trong mê cung
-void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
+void Maze::GenerateRandomWalls() {
     std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
     // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister
     std::mt19937 gen(tp.time_since_epoch().count());
     // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
     // Tính số lượng ô tường cần tạo dựa trên tỷ lệ
-    int numWalls = (WALL_RATIO * ROWS * COLUMNS) / 60;
-    // Đảm bảo ít nhất một ô tường được tạo ra
-    numWalls = std::max(numWalls, 1);
+    int Walls = (ROWS * COLUMNS) / 12;
     // Số lượng ô tường đã được tạo
     int wallCount = 0;
     // Lặp lại để tạo các ô tường ngẫu nhiên
-    while (wallCount < numWalls) {
+    while (wallCount <= Walls) {
         // Tạo chỉ số ngẫu nhiên trong phạm vi mảng
         int index = dist(gen);
         // Tính vị trí hàng và cột từ chỉ số
@@ -94,7 +92,7 @@ void GenerateRandomWalls(std::vector<std::vector<int>>& maze) {
 }
 
 // Tìm vị trí các ô có điểm thưởng
-void FindRewards(std::vector<std::vector<int>>& maze) {
+void Maze::Rewards() {
     for (int i = 1; i < ROWS - 1; i++) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 1) {
@@ -148,12 +146,12 @@ void FindRewards(std::vector<std::vector<int>>& maze) {
 }
 
 // Sửa lỗi mê cung
-void FixMazeError(std::vector<std::vector<int>>& maze) {
-    int i = 1;
-    int j = 1;
+void Maze::FixError() {
+    int ki = 1;
+    int kj = 1;
     for (int di = 0; di <= 2; di++) {
         for (int dj = 0; dj <= 2; dj++) {
-                maze[i + di][j + dj] = 1;
+                maze[ki + di][kj + dj] = 1;
             }
     }
     // Đánh dấu các cạnh của mê cung thành tường
@@ -168,7 +166,7 @@ void FixMazeError(std::vector<std::vector<int>>& maze) {
 }
 
 // Xử lý ô trống không kề tường
-void BreakWalls(std::vector<std::vector<int>>& maze) {
+void Maze::BreakWalls() {
     for (int i = 1; i < ROWS - 1; i++) {
         for (int j = 1; j < COLUMNS - 1; j++) {
             if (maze[i][j] == 0) {
@@ -189,6 +187,30 @@ void BreakWalls(std::vector<std::vector<int>>& maze) {
             }
         }
     }
+}
+
+std::pair<int, int> Maze::EmptySpace() {
+    int endRow = ROWS - 2; // Hàng cuối cùng
+    int endCol = COLUMNS - 2; // Cột cuối cùng
+    // Lặp qua các ô trong mê cung từ cuối mê cung lên trên và từ phải sang trái
+    for (int i = endRow; i >= 0; i--) {
+        for (int j = endCol; j >= 0; j--) {
+            // Nếu ô hiện tại là trống và không phải là tường, trả về vị trí ô đó
+            if (maze[i][j] == 1) {
+                return std::make_pair(i, j);
+            }
+        }
+    }
+    // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
+    return std::make_pair(ROWS-2, COLUMNS-2);
+}
+
+int& Maze::Cells(int row, int col) {
+    return maze[row][col];
+}
+
+std::vector<std::vector<int>>& Maze::getMaze() {
+    return maze;
 }
 
 void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& pause, Timer& myTimer) {
@@ -434,25 +456,6 @@ void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& bre
   SDL_Delay(10); // Đợi một chút để tránh di chuyển quá nhanh
 }
 
-// Tìm một ô trống ở cuối mê cung
-std::pair<int, int> FindEmptySpace() {
-  int endRow = ROWS - 2; // Hàng cuối cùng
-  int endCol = COLUMNS - 2; // Cột cuối cùng
-
-  // Lặp qua các ô trong mê cung từ cuối mê cung lên trên và từ phải sang trái
-  for (int i = endRow; i >= 0; i--) {
-    for (int j = endCol; j >= 0; j--) {
-      // Nếu ô hiện tại là trống và không phải là tường, trả về vị trí ô đó
-      if (maze[i][j] == 1) {
-        return std::make_pair(i, j);
-      }
-    }
-  }
-
-  // Nếu không tìm thấy ô trống, trả về vị trí (0, 0) (không hợp lệ)
-  return std::make_pair(ROWS-2, COLUMNS-2);
-}
-
 void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol) {
     const int VIEW_SIZE = 40; // Kích thước màn hình 35x35 ô
     const int SCREEN_WIDTH = 800; // Kích thước màn hình là 1200x800
@@ -512,7 +515,6 @@ void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Te
             }
         }
     } else {
-       const int halfViewSize = VIEW_SIZE / 2;
 
 // Tính toán vị trí của người chơi trong mê cung
 int playerX = playerCol * CELL_SIZE;
