@@ -1,13 +1,14 @@
 # depslib dependency file v1.0
-1712661558 source:d:\game\thuchanhgame\main.cpp
+1712750802 source:d:\game\thuchanhgame\main.cpp
 	<bits/stdc++.h>
 	<iostream>
 	<ctime>
 	"man_hinh.h"
 	"code_me_cung.h"
 	"time.h"
+	"player.h"
 
-1712676623 d:\game\thuchanhgame\code_me_cung.h
+1712750597 d:\game\thuchanhgame\code_me_cung.h
 	<chrono>
 	<algorithm>
 	<random>
@@ -16,10 +17,8 @@
 	<utility>
 	<ctime>
 	<cstdlib>
-	"man_hinh.h"
-	"time.h"
 
-1712676623 source:d:\game\thuchanhgame\code_me_cung.cpp
+1712752347 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
@@ -29,16 +28,15 @@
 	<SDL.h>
 	<SDL_image.h>
 	"code_me_cung.h"
-	"time.h"
 
-1712629371 d:\game\thuchanhgame\man_hinh.h
+1712751909 d:\game\thuchanhgame\man_hinh.h
 	<SDL.h>
 	<SDL_image.h>
 	<SDL_ttf.h>
 	<sstream>
 	<iostream>
 
-1712629371 source:d:\game\thuchanhgame\man_hinh.cpp
+1712752076 source:d:\game\thuchanhgame\man_hinh.cpp
 	<SDL.h>
 	<SDL_image.h>
 	<iostream>
@@ -850,9 +848,22 @@
 1712629371 source:d:\game\thuchanhgame\time.cpp
 	"time.h"
 
-1712629371 d:\game\thuchanhgame\time.h
-	"man_hinh.h"
+1712682075 d:\game\thuchanhgame\time.h
 	<iostream>
 	<string>
 	<SDL.h>
+
+1712752202 source:d:\game\thuchanhgame\player.cpp
+	"player.h"
+
+1712747518 d:\game\thuchanhgame\player.h
+	<iostream>
+	<vector>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+	<sstream>
+	"time.h"
+	"code_me_cung.h"
+	"man_hinh.h"
 

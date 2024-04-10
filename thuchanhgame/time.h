@@ -1,7 +1,6 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "man_hinh.h" // Sử dụng để có thể sử dụng các hằng số và hàm trong file man_hinh.h
 #include <iostream> // Thư viện nhập xuất cơ bản
 #include <string> // Thư viện chuỗi
 #include <SDL.h> // Thư viện SDL

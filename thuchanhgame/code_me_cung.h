@@ -9,11 +9,11 @@
 #include <utility>
 #include <ctime>
 #include <cstdlib>
-#include "man_hinh.h"
-#include "time.h"
 
 const int ROWS = 100; // Số hàng của mê cung
 const int COLUMNS = 100; // Số cột của mê cung
+const int VIEW_SIZE = 40; // Kích thước màn hình 40x40 ô
+const int CELL_SIZE = 20; // Kích thước của mỗi ô
 
 class Maze {
 private:
@@ -28,21 +28,7 @@ public:
     void BreakWalls();
     std::pair<int, int> EmptySpace();
     int& Cells(int row, int col);
+    void Game();
 };
-// Hàm di chuyển người chơi
-void movePlayer(int& playerRow, int& playerCol, int& blood, int& score, int& breakCount, int& hiddenCount, std::vector<std::vector<int>>& maze, SDL_Renderer* renderer, SDL_Texture* player, bool& kt, bool& pause, Timer& myTimer);
-
-// Hàm tìm một ô trống ở cuối mê cung làm đích
-std::pair<int, int> FindEmptySpace();
-
-// Hàm vẽ mê cung
-void renderMaze(std::vector<std::vector<int>>& maze, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2, SDL_Renderer* renderer, int& playerRow, int& playerCol);
-
-void clearScreen(SDL_Renderer* renderer, int score, TTF_Font* font, Timer& myTimer, int SCREEN_WIDTH, int SCREEN_HEIGHT);
-
-extern SDL_Texture* player;
-extern SDL_Texture* target;
-extern SDL_Texture* target2;
-extern SDL_Renderer* renderer;
 
 #endif

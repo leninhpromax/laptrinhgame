@@ -4,6 +4,7 @@
 #include "man_hinh.h"
 #include "code_me_cung.h"
 #include "time.h"
+#include "player.h"
 
 // Hàm main
 int main(int argc, char *argv[]) {
@@ -50,57 +51,36 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-  font = TTF_OpenFont("font.ttf", 28);
+  font = TTF_OpenFont("font.ttf", 24);
 if (font == nullptr) {
     std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
     // Xử lý lỗi ở đây, có thể là thoát chương trình hoặc sử dụng một font mặc định khác
 }
 
-  // Khởi tạo mê cung và tạo các điểm thưởng, tường, cổng bí mật
-    srand(time(nullptr));
+   // Khởi tạo Timer và Maze
+    Timer myTimer;
     Maze mazeG;
-    mazeG.Create();
-    mazeG.GenerateRandomWalls();
-    mazeG.Rewards();
-    mazeG.FixError();
-    mazeG.BreakWalls();
-    std::pair<int, int> Position = mazeG.EmptySpace();
-    int endRow = Position.first;
-    int endCol = Position.second;
-    mazeG.Cells(endRow, endCol) = 6;
+    Player playerG(myTimer, mazeG);
 
-  // Khởi tạo vị trí ban đầu của người chơi và điểm kết thúc
-  int playerRow = 1;
-  int playerCol = 1;
-  mazeG.Cells(playerRow,playerCol) = 5;
-
-  int score = 0;
-  int breakCount = 5;
-  int hiddenCount = 0;
-  int blood = 500;
-  bool kt = false;
-   Timer myTimer;
-   myTimer.start();
-   bool pause = false;
+    // Bắt đầu trò chơi
+    playerG.StartGame();
 
   // Vẽ hình nền lên renderer
   SDL_RenderCopy(renderer, background, NULL, NULL);
   // Hiển thị mê cung và người chơi
-
-  renderMaze(mazeG.getMaze(), player, target, target2, renderer, playerRow, playerCol);
+  playerG.RenderMaze(renderer,font, player, target, target2);
   // Hiển thị lên màn hình
   SDL_RenderPresent(renderer);
 
   // Chương trình sẽ chạy cho đến khi người chơi chạm đến điểm kết thúc hoặc thoát chương trình
-  while (kt == false) {
+  while (!playerG.isGameFinished()) {
     // Vẽ hình nền lên renderer
     SDL_RenderCopy(renderer, background, NULL, NULL);
-    renderMaze(mazeG.getMaze(), player, target, target2, renderer, playerRow, playerCol);
-
+    playerG.RenderMaze(renderer,font, player, target, target2);
     // Di chuyển người chơi
-    movePlayer(playerRow, playerCol, blood, score, breakCount, hiddenCount, mazeG.getMaze(), renderer, player, kt, pause, myTimer);
+    playerG.Move();
   }
-  clearScreen(renderer, score, font, myTimer, SCREEN_WIDTH, SCREEN_HEIGHT);
+  playerG.WinnerScreen(renderer,font);
   myTimer.stop();
 
   // Chờ 2,5 giây trước khi thoát chương trình
