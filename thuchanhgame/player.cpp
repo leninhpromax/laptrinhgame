@@ -37,184 +37,16 @@ void Player::Move() {
                         myTimer.pause();
                         break;
                     case SDLK_w:
-                        if (playerRow > 0 && mazek()[playerRow - 1][playerCol] != 0 && mazek()[playerRow - 1][playerCol] != 6 && blood > 0) {
-                            if (mazek()[playerRow - 1][playerCol] == 4) {
-                                if (breakCount > 0) {
-                                    breakCount--;
-                                    mazek()[playerRow - 1][playerCol] = 1;
-                                } else {
-                                    break;
-                                }
-                            }
-                            mazek()[playerRow][playerCol] = 1;
-                            playerRow--;
-                            if (mazek()[playerRow][playerCol] == 2) {
-                                int randomScore = rand() % 3 + 1;
-                                score += randomScore;
-                            } else if (mazek()[playerRow][playerCol] == 3) {
-                                hiddenCount++;
-                                int hidden = rand()%4 + 1;
-                                if (hidden == 1){
-                                    score ++;
-                                }
-                                else if (hidden == 2){
-                                    breakCount ++;
-                                }
-                                else if (hidden == 3){
-                                    int mau = (rand()%10 + 1)*10;
-                                    blood -= mau;
-                                }
-                                else {
-                                    if (blood <= 450 && blood > 0){
-                                        blood += 50;
-                                    }
-                                    else {
-                                        blood = 500;
-                                    }
-                                }
-                            } else if (mazek()[playerRow][playerCol] == 4) {
-                                breakCount--;
-                            }
-                            mazek()[playerRow][playerCol] = 5;
-                        }
-                        else if (mazek()[playerRow][playerCol - 1] == 6 || blood <= 0){
-                            setGameFinished(true);
-                        }
+                        Moveup();
                         break;
                     case SDLK_s:
-                        if (playerRow < ROWS - 1 && mazek()[playerRow + 1][playerCol] != 0 && mazek()[playerRow + 1][playerCol] != 6) {
-                            if (mazek()[playerRow + 1][playerCol] == 4) {
-                                if (breakCount > 0) {
-                                    breakCount--;
-                                    mazek()[playerRow + 1][playerCol] = 1;
-                                } else {
-                                    break;
-                                }
-                            }
-                            mazek()[playerRow][playerCol] = 1;
-                            playerRow++;
-                            if (mazek()[playerRow][playerCol] == 2) {
-                                int randomScore = rand() % 3 + 1;
-                                score += randomScore;
-                            } else if (mazek()[playerRow][playerCol] == 3) {
-                                hiddenCount++;
-                                int hidden = rand()%4 + 1;
-                                if (hidden == 1){
-                                    score ++;
-                                }
-                                else if (hidden == 2){
-                                    breakCount ++;
-                                }
-                                else if (hidden == 3){
-                                    int mau = (rand()%10 + 1)*10;
-                                    blood -= mau;
-                                }
-                                else {
-                                    if (blood <= 450 && blood > 0){
-                                        blood += 50;
-                                    }
-                                    else {
-                                        blood = 500;
-                                    }
-                                }
-                            } else if (mazek()[playerRow][playerCol] == 4) {
-                                breakCount--;
-                            }
-                            mazek()[playerRow][playerCol] = 5;
-                        }
-                        else if (mazek()[playerRow + 1][playerCol] == 6 || blood <= 0){
-                            setGameFinished(true);
-                        }
+                        Movedown();
                         break;
                     case SDLK_a:
-                        if (playerCol > 0 && mazek()[playerRow][playerCol - 1] != 0 && mazek()[playerRow][playerCol - 1] != 6) {
-                            if (mazek()[playerRow][playerCol - 1] == 4) {
-                                if (breakCount > 0) {
-                                    breakCount--;
-                                    mazek()[playerRow][playerCol - 1] = 1;
-                                } else {
-                                    break;
-                                }
-                            }
-                            mazek()[playerRow][playerCol] = 1;
-                            playerCol--;
-                            if (mazek()[playerRow][playerCol] == 2) {
-                                int randomScore = rand() % 3 + 1;
-                                score += randomScore;
-                            } else if (mazek()[playerRow][playerCol] == 3) {
-                                hiddenCount++;
-                                int hidden = rand()%4 + 1;
-                                if (hidden == 1){
-                                    score ++;
-                                }
-                                else if (hidden == 2){
-                                    breakCount ++;
-                                }
-                                else if (hidden == 3){
-                                    int mau = (rand()%10 + 1)*10;
-                                    blood -= mau;
-                                }
-                                else {
-                                    if (blood <= 450 && blood > 0){
-                                        blood += 50;
-                                    }
-                                    else {
-                                        blood = 500;
-                                    }
-                                }
-                            } else if (mazek()[playerRow][playerCol] == 4) {
-                                breakCount--;
-                            }
-                            mazek()[playerRow][playerCol] = 5;
-                        }
-                        else if (mazek()[playerRow][playerCol - 1] == 6 || blood <= 0){
-                            setGameFinished(true);
-                        }
+                        Moveleft();
                         break;
                     case SDLK_d:
-                        if (playerCol < COLUMNS - 1 && mazek()[playerRow][playerCol + 1] != 0 && mazek()[playerRow][playerCol + 1] != 6) {
-                            if (mazek()[playerRow][playerCol + 1] == 4) {
-                                if (breakCount > 0) {
-                                    breakCount--;
-                                    mazek()[playerRow][playerCol + 1] = 1;
-                                } else {
-                                    break;
-                                }
-                            }
-                            mazek()[playerRow][playerCol] = 1;
-                            playerCol++;
-                            if (mazek()[playerRow][playerCol] == 2) {
-                                int randomScore = rand() % 3 + 1;
-                                score += randomScore;
-                            } else if (mazek()[playerRow][playerCol] == 3) {
-                                hiddenCount++;
-                                int hidden = rand()%4 + 1;
-                                if (hidden == 1){
-                                    score ++;
-                                }
-                                else if (hidden == 2){
-                                    breakCount ++;
-                                }
-                                else if (hidden == 3){
-                                    int mau = (rand()%10 + 1)*10;
-                                    blood -= mau;
-                                }
-                                else {
-                                    if (blood <= 450 && blood > 0){
-                                        blood += 50;
-                                    }
-                                    else {
-                                        blood = 500;
-                                    }
-                                }
-                            } else if (mazek()[playerRow][playerCol] == 4) {
-                                breakCount--;
-                            }
-                            mazek()[playerRow][playerCol] = 5;
-                        }
-                        else if (mazek()[playerRow][playerCol + 1] == 6 || blood <= 0){
-                            setGameFinished(true);
-                        }
+                       Moveright();
                         break;
                 }
             }
@@ -391,17 +223,195 @@ void Player::WinnerScreen(SDL_Renderer* renderer, TTF_Font* font) {
 
     std::stringstream winText;
     winText << "Win" ;
-    renderText(renderer, font, winText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 400) / 2);
+    renderText(renderer, font, winText.str().c_str(), 400, 400);
 
     // Hiển thị điểm số và thời gian chơi
     std::stringstream scoreText;
     scoreText << "Your score: " << score << " seconds";
-    renderText(renderer, font, scoreText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 200) / 2);
+    renderText(renderer, font, scoreText.str().c_str(), 400, 600);
 
     std::stringstream timeText;
     timeText << "Time: " << TimeInSeconds << " seconds";
-    renderText(renderer, font, timeText.str().c_str(), (SCREEN_WIDTH - 400) / 2, (SCREEN_HEIGHT - 300) / 2);
+    renderText(renderer, font, timeText.str().c_str(), 400, 500);
 
     // Hiển thị lên màn hình
     SDL_RenderPresent(renderer);
+}
+
+void Player::Moveup() {
+    if (playerRow > 0) {
+        if (mazek()[playerRow - 1][playerCol] != 0 && mazek()[playerRow - 1][playerCol] != 6 && blood > 0) {
+            if (mazek()[playerRow - 1][playerCol] == 4) {
+                if (breakCount > 0) {
+                    breakCount--;
+                    mazek()[playerRow - 1][playerCol] = 1;
+                } else {
+                    return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
+                }
+            }
+
+            if (mazek()[playerRow][playerCol] == 2) {
+                int randomScore = rand() % 3 + 1;
+                score += randomScore;
+            } else if (mazek()[playerRow][playerCol] == 3) {
+                hiddenCount++;
+                int hidden = rand() % 4 + 1;
+                if (hidden == 1) {
+                    score++;
+                } else if (hidden == 2) {
+                    breakCount++;
+                } else if (hidden == 3) {
+                    int mau = (rand() % 10 + 1) * 10;
+                    blood -= mau;
+                } else {
+                    if (blood <= 450 && blood > 0) {
+                        blood += 50;
+                    } else {
+                        blood = 500;
+                    }
+                }
+            } else if (mazek()[playerRow][playerCol] == 4) {
+                breakCount--;
+            }
+            mazek()[playerRow][playerCol] = 1;
+            playerRow--;
+            mazek()[playerRow][playerCol] = 5;
+        } else {
+            // Người chơi chạm tường, đi ra ngoài mê cung hoặc hết máu
+            setGameFinished(true);
+        }
+    }
+}
+
+void Player::Movedown() {
+    if (playerRow < ROWS - 1) {
+        if (mazek()[playerRow + 1][playerCol] != 0 && mazek()[playerRow + 1][playerCol] != 6) {
+            if (mazek()[playerRow + 1][playerCol] == 4) {
+                if (breakCount > 0) {
+                    breakCount--;
+                    mazek()[playerRow + 1][playerCol] = 1;
+                } else {
+                    return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
+                }
+            }
+            mazek()[playerRow][playerCol] = 1;
+            playerRow++;
+            if (mazek()[playerRow][playerCol] == 2) {
+                int randomScore = rand() % 3 + 1;
+                score += randomScore;
+            } else if (mazek()[playerRow][playerCol] == 3) {
+                hiddenCount++;
+                int hidden = rand() % 4 + 1;
+                if (hidden == 1) {
+                    score++;
+                } else if (hidden == 2) {
+                    breakCount++;
+                } else if (hidden == 3) {
+                    int mau = (rand() % 10 + 1) * 10;
+                    blood -= mau;
+                } else {
+                    if (blood <= 450 && blood > 0) {
+                        blood += 50;
+                    } else {
+                        blood = 500;
+                    }
+                }
+            } else if (mazek()[playerRow][playerCol] == 4) {
+                breakCount--;
+            }
+            mazek()[playerRow][playerCol] = 5;
+        } else {
+            // Người chơi chạm tường hoặc đi ra ngoài mê cung hoặc hết máu
+            setGameFinished(true);
+        }
+    }
+}
+
+void Player::Moveleft() {
+    if (playerCol > 0) {
+        if (mazek()[playerRow][playerCol - 1] != 0 && mazek()[playerRow][playerCol - 1] != 6) {
+            if (mazek()[playerRow][playerCol - 1] == 4) {
+                if (breakCount > 0) {
+                    breakCount--;
+                    mazek()[playerRow][playerCol - 1] = 1;
+                } else {
+                    return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
+                }
+            }
+
+            if (mazek()[playerRow][playerCol] == 2) {
+                int randomScore = rand() % 3 + 1;
+                score += randomScore;
+            } else if (mazek()[playerRow][playerCol] == 3) {
+                hiddenCount++;
+                int hidden = rand() % 4 + 1;
+                if (hidden == 1) {
+                    score++;
+                } else if (hidden == 2) {
+                    breakCount++;
+                } else if (hidden == 3) {
+                    int mau = (rand() % 10 + 1) * 10;
+                    blood -= mau;
+                } else {
+                    if (blood <= 450 && blood > 0) {
+                        blood += 50;
+                    } else {
+                        blood = 500;
+                    }
+                }
+            } else if (mazek()[playerRow][playerCol] == 4) {
+                breakCount--;
+            }
+            mazek()[playerRow][playerCol] = 1;
+            playerCol--;
+            mazek()[playerRow][playerCol] = 5;
+        } else {
+            // Người chơi chạm tường hoặc hết máu
+            setGameFinished(true);
+        }
+    }
+}
+void Player::Moveright() {
+    if (playerCol < COLUMNS - 1) {
+        if (mazek()[playerRow][playerCol + 1] != 0 && mazek()[playerRow][playerCol + 1] != 6) {
+            if (mazek()[playerRow][playerCol + 1] == 4) {
+                if (breakCount > 0) {
+                    breakCount--;
+                    mazek()[playerRow][playerCol + 1] = 1;
+                } else {
+                    return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
+                }
+            }
+
+            if (mazek()[playerRow][playerCol] == 2) {
+                int randomScore = rand() % 3 + 1;
+                score += randomScore;
+            } else if (mazek()[playerRow][playerCol] == 3) {
+                hiddenCount++;
+                int hidden = rand() % 4 + 1;
+                if (hidden == 1) {
+                    score++;
+                } else if (hidden == 2) {
+                    breakCount++;
+                } else if (hidden == 3) {
+                    int mau = (rand() % 10 + 1) * 10;
+                    blood -= mau;
+                } else {
+                    if (blood <= 450 && blood > 0) {
+                        blood += 50;
+                    } else {
+                        blood = 500;
+                    }
+                }
+            } else if (mazek()[playerRow][playerCol] == 4) {
+                breakCount--;
+            }
+            mazek()[playerRow][playerCol] = 1;
+            playerCol++;
+            mazek()[playerRow][playerCol] = 5;
+        } else {
+            // Người chơi chạm tường hoặc hết máu
+            setGameFinished(true);
+        }
+    }
 }

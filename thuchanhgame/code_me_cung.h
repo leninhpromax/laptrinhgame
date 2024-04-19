@@ -12,8 +12,6 @@
 
 const int ROWS = 100; // Số hàng của mê cung
 const int COLUMNS = 100; // Số cột của mê cung
-const int VIEW_SIZE = 40; // Kích thước màn hình 40x40 ô
-const int CELL_SIZE = 20; // Kích thước của mỗi ô
 
 class Maze {
 private:

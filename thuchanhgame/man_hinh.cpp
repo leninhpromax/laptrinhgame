@@ -1,26 +1,14 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <iostream>
 #include "man_hinh.h"
-
-const int SCREEN_WIDTH = 1200;
-const int SCREEN_HEIGHT = 800;
-const char* WINDOW_TITLE = "Game";
-
-
-TTF_Font* font = NULL; // Biến toàn cục để lưu trữ font chữ được sử dụng trong chương trình
 
 SDL_Color textColor = { 255, 255, 255 }; // Màu chữ mặc định, sử dụng để hiển thị văn bản
 
-void logErrorAndExit(const char* msg, const char* error)
-{
+void logErrorAndExit(const char* msg, const char* error) {
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
     SDL_Quit();
     exit(1); // Thoát khỏi chương trình với mã lỗi 1
 }
 
-SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITLE)
-{
+SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITLE) {
     // Khởi tạo SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         logErrorAndExit("SDL_Init", SDL_GetError());
@@ -36,8 +24,7 @@ SDL_Window* initSDL(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* WINDOW_TITL
     return window;
 }
 
-SDL_Renderer* createRenderer(SDL_Window* window)
-{
+SDL_Renderer* createRenderer(SDL_Window* window) {
     // Tạo renderer để vẽ đồ họa lên cửa sổ
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -46,23 +33,20 @@ SDL_Renderer* createRenderer(SDL_Window* window)
     // Đặt chất lượng scale của renderer
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     // Đặt kích thước logic của renderer
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_RenderSetLogicalSize(renderer, WINDOW_CONFIG.width, WINDOW_CONFIG.height);
 
     return renderer;
 }
 
-void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
-{
+void quitSDL(SDL_Window* window, SDL_Renderer* renderer) {
     // Giải phóng bộ nhớ và đóng SDL
     IMG_Quit();
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-void waitUntilKeyPressed()
-{
+void waitUntilKeyPressed() {
     // Chờ đến khi có một sự kiện xảy ra (phím được nhấn hoặc thoát chương trình)
     SDL_Event e;
     while (true) {
@@ -75,8 +59,7 @@ void waitUntilKeyPressed()
     }
 }
 
-void renderTexture(SDL_Texture *texture, int x, int y, int width, int height, SDL_Renderer* renderer)
-{
+void renderTexture(SDL_Texture *texture, int x, int y, int width, int height, SDL_Renderer* renderer) {
     if (texture == nullptr) return; // Kiểm tra texture có hợp lệ không trước khi vẽ
 
     // Vẽ một texture lên renderer tại vị trí (x, y) với kích thước (width, height)
@@ -89,39 +72,45 @@ void renderTexture(SDL_Texture *texture, int x, int y, int width, int height, SD
     SDL_RenderCopy(renderer, texture, NULL, &dest);
 }
 
-SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer)
-{
+SDL_Texture* loadTexture(const char* filename, SDL_Renderer* renderer) {
     // Load một texture từ file và trả về
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", filename);
 
-    SDL_Texture *texture = IMG_LoadTexture(renderer, filename);
+    SDL_Texture* texture = IMG_LoadTexture(renderer, filename);
     if (texture == nullptr) {
-        SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "Load texture %s", IMG_GetError());
+        logErrorAndExit("LoadTexture", IMG_GetError());
     }
 
     return texture;
 }
 
 void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y) {
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text, textColor); // Tạo surface chứa văn bản
+    // Tạo surface chứa văn bản
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text, textColor);
     if (surface == nullptr) {
         std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
         return;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface); // Tạo texture từ surface
-    SDL_FreeSurface(surface); // Giải phóng surface
+    // Tạo texture từ surface
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface); // Giải phóng surface sau khi tạo texture
     if (texture == nullptr) {
         std::cerr << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << std::endl;
         return;
     }
 
+    // Lấy kích thước của texture
     int texW = 0;
     int texH = 0;
-    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH); // Lấy kích thước của texture
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
 
-    SDL_Rect destRect = { x, y, texW, texH }; // Tạo hình chữ nhật đích
-    SDL_RenderCopy(renderer, texture, NULL, &destRect); // Sao chép texture lên renderer
+    // Tạo hình chữ nhật đích
+    SDL_Rect destRect = { x, y, texW, texH };
 
-    SDL_DestroyTexture(texture); // Giải phóng texture
+    // Sao chép texture lên renderer
+    SDL_RenderCopy(renderer, texture, NULL, &destRect);
+
+    // Giải phóng texture
+    SDL_DestroyTexture(texture);
 }

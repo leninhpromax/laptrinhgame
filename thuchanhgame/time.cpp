@@ -51,5 +51,3 @@ bool Timer::is_started() {
 bool Timer::is_paused() {
     return paused; // Trả về true nếu đang tạm dừng, ngược lại false
 }
-
-

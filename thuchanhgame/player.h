@@ -10,10 +10,14 @@
 #include "time.h"
 #include "code_me_cung.h"
 #include "man_hinh.h"
+#include "bullet.h"
+
+const int VIEW_SIZE = 40; // Kích thước màn hình 40x40 ô
+const int CELL_SIZE = 20; // Kích thước của mỗi ô
 
 class Player {
 private:
-    int playerRow;
+      int playerRow;
     int playerCol;
     int blood;
     int score;
@@ -21,13 +25,15 @@ private:
     int hiddenCount;
     bool gameFinished;
     bool gameQuit;
+    bool gameOver;
     Timer myTimer;
     Maze mazeG;
-    SDL_Renderer* renderer;
+
+    TTF_Font* font;
+    SDL_Renderer*renderer;
     SDL_Texture* player;
     SDL_Texture* target;
     SDL_Texture* target2;
-
 public:
     Player(Timer& timer, Maze& maze); // Constructor với Timer và Maze
     void StartGame();
@@ -66,11 +72,22 @@ public:
     void setGameQuit(bool quit) {
         gameQuit = quit;
     }
+     bool isGameOver() {
+        return gameOver;
+    }
+
+    void setGameOver(bool over1) {
+        gameOver = over1;
+    }
 
     int& Replace(int row, int col);
 
     void RenderMaze(SDL_Renderer* renderer, TTF_Font* font, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2); // Loại bỏ tham số renderer
     void WinnerScreen(SDL_Renderer* renderer, TTF_Font* font);
+    void Moveup();
+    void Movedown();
+    void Moveleft();
+    void Moveright();
 };
 
 #endif

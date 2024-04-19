@@ -4,21 +4,17 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <sstream> // Thư viện chuỗi stringstream
 #include <iostream>
 
-// Khai báo các biến toàn cục
-extern const int SCREEN_WIDTH;      // Chiều rộng của cửa sổ
-extern const int SCREEN_HEIGHT;     // Chiều cao của cửa sổ
-extern const char* WINDOW_TITLE;    // Tiêu đề của cửa sổ
+struct WindowConfig {
+    int width;
+    int height;
+    const char* title;
+};
 
-
-extern TTF_Font* font; // Biến font được sử dụng bên ngoài, được khai báo ở file main.cpp
-// Đưa biến font vào phạm vi toàn cục để có thể sử dụng ở các file khác
+const WindowConfig WINDOW_CONFIG = { 1200, 800, "Game Window" };
 
 extern SDL_Color textColor; // Màu chữ textColor được sử dụng bên ngoài, được khai báo ở file main.cpp
-// Đưa màu textColor vào phạm vi toàn cục để có thể sử dụng ở các file khác
-
 
 // Hàm để ghi log lỗi và thoát khỏi SDL
 void logErrorAndExit(const char* msg, const char* error);
