@@ -49,29 +49,30 @@ void Player::Move() {
                        Moveright();
                         break;
                 }
-            }
+            } else if (e.type == SDL_QUIT) { // Nếu sự kiện là thoát khỏi chương trình
+                setGameFinished(true); // Đặt trạng thái kết thúc trò chơi thành true
+        }
         }
     }
     else{
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
-                    case SDL_QUIT:
-                        setGameFinished(true);
-                        break;
                     case SDLK_q:
                         setGameQuit(false);
                         myTimer.unpause();
                         break;
                 }
-            }
+            } else if (e.type == SDL_QUIT) { // Nếu sự kiện là thoát khỏi chương trình
+                setGameFinished(true); // Đặt trạng thái kết thúc trò chơi thành true
+        }
         }
     }
     SDL_Delay(10); // Đợi một chút để tránh di chuyển quá nhanh
-    RenderMaze(renderer, font, player, target, target2); // Vẽ lại mê cung sau khi di chuyển người chơi
+    RenderMaze(); // Vẽ lại mê cung sau khi di chuyển người chơi
 }
 
-void Player::RenderMaze(SDL_Renderer* renderer, TTF_Font* font, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2) {
+void Player::RenderMaze() {
     int widthl = 800; // Kích thước màn hình là 1200x800
     int heightl = 800;
     int MAZE_SIZE = 100; // Kích thước mê cung
@@ -187,7 +188,7 @@ for (int i = 0; i < heightl / CELL_SIZE; i++) {
 }
       // Hiển thị thời gian
     std::stringstream time;
-    time << "Timer: " << myTimer.get_ticks() / 1000.f;
+    time << "Timer: " << static_cast<int>(myTimer.get_ticks() / 1000.f);
     renderText(renderer, font, time.str().c_str(), 850, 100);
 
     std::stringstream bloodString;
@@ -213,13 +214,13 @@ for (int i = 0; i < heightl / CELL_SIZE; i++) {
   SDL_RenderPresent(renderer); // Hiển thị lên màn hình
 }
 
-void Player::WinnerScreen(SDL_Renderer* renderer, TTF_Font* font) {
+void Player::WinnerScreen() {
     // Xóa màn hình
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     // Tính thời gian đã chơi
-    float TimeInSeconds = myTimer.get_ticks() / 1000.f;
+    int TimeInSeconds = myTimer.get_ticks() / 1000.f;
 
     std::stringstream winText;
     winText << "Win" ;
@@ -240,20 +241,22 @@ void Player::WinnerScreen(SDL_Renderer* renderer, TTF_Font* font) {
 
 void Player::Moveup() {
     if (playerRow > 0) {
-        if (mazek()[playerRow - 1][playerCol] != 0 && mazek()[playerRow - 1][playerCol] != 6 && blood > 0) {
-            if (mazek()[playerRow - 1][playerCol] == 4) {
+        int nextCell = mazek()[playerRow - 1][playerCol]; // Ô tiếp theo mà người chơi sẽ di chuyển đến
+        if (nextCell != 0 && nextCell != 6 && blood > 0) { // Kiểm tra ô tiếp theo không phải là tường hoặc ô đích và người chơi còn máu
+            if (nextCell == 4) { // Nếu ô tiếp theo là gạch và người chơi còn cơ hội phá
                 if (breakCount > 0) {
                     breakCount--;
-                    mazek()[playerRow - 1][playerCol] = 1;
+                    mazek()[playerRow - 1][playerCol] = 1; // Phá gạch và di chuyển lên
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
                 }
             }
-
-            if (mazek()[playerRow][playerCol] == 2) {
+            mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
+            playerRow--; // Di chuyển lên
+            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
-                score += randomScore;
-            } else if (mazek()[playerRow][playerCol] == 3) {
+                score += randomScore; // Tăng điểm
+            } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
@@ -270,36 +273,36 @@ void Player::Moveup() {
                         blood = 500;
                     }
                 }
-            } else if (mazek()[playerRow][playerCol] == 4) {
-                breakCount--;
             }
-            mazek()[playerRow][playerCol] = 1;
-            playerRow--;
-            mazek()[playerRow][playerCol] = 5;
-        } else {
-            // Người chơi chạm tường, đi ra ngoài mê cung hoặc hết máu
+            mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
+        } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
+            return; // Không thực hiện di chuyển
+        } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
+    } else { // Nếu người chơi ở hàng trên cùng của mê cung
+        setGameFinished(true); // Kết thúc trò chơi
     }
 }
 
 void Player::Movedown() {
     if (playerRow < ROWS - 1) {
-        if (mazek()[playerRow + 1][playerCol] != 0 && mazek()[playerRow + 1][playerCol] != 6) {
-            if (mazek()[playerRow + 1][playerCol] == 4) {
+        int nextCell = mazek()[playerRow + 1][playerCol]; // Ô tiếp theo mà người chơi sẽ di chuyển đến
+        if (nextCell != 0 && nextCell != 6 && blood > 0) { // Kiểm tra ô tiếp theo không phải là tường hoặc ô đích và người chơi còn máu
+            if (nextCell == 4) { // Nếu ô tiếp theo là gạch và người chơi còn cơ hội phá
                 if (breakCount > 0) {
                     breakCount--;
-                    mazek()[playerRow + 1][playerCol] = 1;
+                    mazek()[playerRow + 1][playerCol] = 1; // Phá gạch và di chuyển xuống
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
                 }
             }
-            mazek()[playerRow][playerCol] = 1;
-            playerRow++;
-            if (mazek()[playerRow][playerCol] == 2) {
+            mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
+            playerRow++; // Di chuyển xuống
+            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
-                score += randomScore;
-            } else if (mazek()[playerRow][playerCol] == 3) {
+                score += randomScore; // Tăng điểm
+            } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
@@ -316,33 +319,36 @@ void Player::Movedown() {
                         blood = 500;
                     }
                 }
-            } else if (mazek()[playerRow][playerCol] == 4) {
-                breakCount--;
             }
-            mazek()[playerRow][playerCol] = 5;
-        } else {
-            // Người chơi chạm tường hoặc đi ra ngoài mê cung hoặc hết máu
+            mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
+        } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
+            return; // Không thực hiện di chuyển
+        } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
+    } else { // Nếu người chơi ở hàng dưới cùng của mê cung
+        setGameFinished(true); // Kết thúc trò chơi
     }
 }
 
 void Player::Moveleft() {
     if (playerCol > 0) {
-        if (mazek()[playerRow][playerCol - 1] != 0 && mazek()[playerRow][playerCol - 1] != 6) {
-            if (mazek()[playerRow][playerCol - 1] == 4) {
+        int nextCell = mazek()[playerRow][playerCol - 1]; // Ô tiếp theo mà người chơi sẽ di chuyển đến
+        if (nextCell != 0 && nextCell != 6 && blood > 0) { // Kiểm tra ô tiếp theo không phải là tường hoặc ô đích và người chơi còn máu
+            if (nextCell == 4) { // Nếu ô tiếp theo là gạch và người chơi còn cơ hội phá
                 if (breakCount > 0) {
                     breakCount--;
-                    mazek()[playerRow][playerCol - 1] = 1;
+                    mazek()[playerRow][playerCol - 1] = 1; // Phá gạch và di chuyển sang trái
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
                 }
             }
-
-            if (mazek()[playerRow][playerCol] == 2) {
+            mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
+            playerCol--; // Di chuyển sang trái
+            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
-                score += randomScore;
-            } else if (mazek()[playerRow][playerCol] == 3) {
+                score += randomScore; // Tăng điểm
+            } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
@@ -359,34 +365,36 @@ void Player::Moveleft() {
                         blood = 500;
                     }
                 }
-            } else if (mazek()[playerRow][playerCol] == 4) {
-                breakCount--;
             }
-            mazek()[playerRow][playerCol] = 1;
-            playerCol--;
-            mazek()[playerRow][playerCol] = 5;
-        } else {
-            // Người chơi chạm tường hoặc hết máu
+            mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
+        } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
+            return; // Không thực hiện di chuyển
+        } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
+    } else { // Nếu người chơi ở cột bên trái của mê cung
+        setGameFinished(true); // Kết thúc trò chơi
     }
 }
+
 void Player::Moveright() {
     if (playerCol < COLUMNS - 1) {
-        if (mazek()[playerRow][playerCol + 1] != 0 && mazek()[playerRow][playerCol + 1] != 6) {
-            if (mazek()[playerRow][playerCol + 1] == 4) {
+        int nextCell = mazek()[playerRow][playerCol + 1]; // Ô tiếp theo mà người chơi sẽ di chuyển đến
+        if (nextCell != 0 && nextCell != 6 && blood > 0) { // Kiểm tra ô tiếp theo không phải là tường hoặc ô đích và người chơi còn máu
+            if (nextCell == 4) { // Nếu ô tiếp theo là gạch và người chơi còn cơ hội phá
                 if (breakCount > 0) {
                     breakCount--;
-                    mazek()[playerRow][playerCol + 1] = 1;
+                    mazek()[playerRow][playerCol + 1] = 1; // Phá gạch và di chuyển sang phải
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
                 }
             }
-
-            if (mazek()[playerRow][playerCol] == 2) {
+            mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
+            playerCol++; // Di chuyển sang phải
+            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
-                score += randomScore;
-            } else if (mazek()[playerRow][playerCol] == 3) {
+                score += randomScore; // Tăng điểm
+            } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
@@ -403,15 +411,14 @@ void Player::Moveright() {
                         blood = 500;
                     }
                 }
-            } else if (mazek()[playerRow][playerCol] == 4) {
-                breakCount--;
             }
-            mazek()[playerRow][playerCol] = 1;
-            playerCol++;
-            mazek()[playerRow][playerCol] = 5;
-        } else {
-            // Người chơi chạm tường hoặc hết máu
+            mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
+        } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
+            return; // Không thực hiện di chuyển
+        } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
+    } else { // Nếu người chơi ở cột bên trái của mê cung
+        setGameFinished(true); // Kết thúc trò chơi
     }
 }

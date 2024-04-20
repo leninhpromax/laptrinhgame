@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1713523550 source:d:\game\thuchanhgame\main.cpp
+1713582221 source:d:\game\thuchanhgame\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -36,7 +36,7 @@
 	<SDL_ttf.h>
 	<iostream>
 
-1713521291 source:d:\game\thuchanhgame\man_hinh.cpp
+1713543049 source:d:\game\thuchanhgame\man_hinh.cpp
 	"man_hinh.h"
 
 1710511854 c:\users\windows 11\downloads\sdl2-devel-2.30.1-mingw\sdl2-2.30.1\i686-w64-mingw32\include\sdl2\sdl.h
@@ -850,10 +850,10 @@
 	<string>
 	<SDL.h>
 
-1713523476 source:d:\game\thuchanhgame\player.cpp
+1713584648 source:d:\game\thuchanhgame\player.cpp
 	"player.h"
 
-1713524960 d:\game\thuchanhgame\player.h
+1713581776 d:\game\thuchanhgame\player.h
 	<iostream>
 	<vector>
 	<SDL.h>

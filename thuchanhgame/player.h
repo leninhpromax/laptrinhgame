@@ -17,7 +17,7 @@ const int CELL_SIZE = 20; // Kích thước của mỗi ô
 
 class Player {
 private:
-      int playerRow;
+    int playerRow;
     int playerCol;
     int blood;
     int score;
@@ -25,7 +25,6 @@ private:
     int hiddenCount;
     bool gameFinished;
     bool gameQuit;
-    bool gameOver;
     Timer myTimer;
     Maze mazeG;
 
@@ -62,6 +61,7 @@ public:
     bool isGameFinished() {
         return gameFinished;
     }
+
     bool isGameQuit() {
         return gameQuit;
     }
@@ -72,22 +72,36 @@ public:
     void setGameQuit(bool quit) {
         gameQuit = quit;
     }
-     bool isGameOver() {
-        return gameOver;
+
+    void setRenderer(SDL_Renderer* ren) {
+        renderer = ren;
     }
 
-    void setGameOver(bool over1) {
-        gameOver = over1;
+    void setFont(TTF_Font* f) {
+        font = f;
+    }
+
+    void setPlayer(SDL_Texture* p) {
+        player = p;
+    }
+
+    void setTarget(SDL_Texture* t) {
+        target = t;
+    }
+
+    void setTarget2(SDL_Texture* t2) {
+        target2 = t2;
     }
 
     int& Replace(int row, int col);
 
-    void RenderMaze(SDL_Renderer* renderer, TTF_Font* font, SDL_Texture* player, SDL_Texture* target, SDL_Texture* target2); // Loại bỏ tham số renderer
-    void WinnerScreen(SDL_Renderer* renderer, TTF_Font* font);
+    void RenderMaze(); // Loại bỏ tham số renderer
+    void WinnerScreen();
     void Moveup();
     void Movedown();
     void Moveleft();
     void Moveright();
+
 };
 
 #endif

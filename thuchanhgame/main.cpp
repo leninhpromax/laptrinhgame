@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Failed to create window! SDL Error: " << SDL_GetError() << std::endl;
         return 1;
     }
+    TTF_Init();
 
     // Tạo renderer
     SDL_Renderer* renderer = createRenderer(window);
@@ -32,24 +33,24 @@ int main(int argc, char* argv[]) {
     }
 
     // Load hình nhân vật người chơi
-    SDL_Texture* playerTexture = loadTexture("player.jpg", renderer);
-    if (playerTexture == nullptr) {
+    SDL_Texture* player = loadTexture("player.jpg", renderer);
+    if (player == nullptr) {
         std::cerr << "Failed to load player texture! SDL Error: " << SDL_GetError() << std::endl;
         quitSDL(window, renderer);
         return 1;
     }
 
     // Load hình mục tiêu
-    SDL_Texture* targetTexture = loadTexture("congchua2.jpg", renderer);
-    if (targetTexture == nullptr) {
+    SDL_Texture* target = loadTexture("congchua2.jpg", renderer);
+    if (target == nullptr) {
         std::cerr << "Failed to load target texture! SDL Error: " << SDL_GetError() << std::endl;
         quitSDL(window, renderer);
         return 1;
     }
 
     // Load hình mục tiêu thứ 2
-    SDL_Texture* target2Texture = loadTexture("congchua1.jpg", renderer);
-    if (target2Texture == nullptr) {
+    SDL_Texture* target2 = loadTexture("congchua1.jpg", renderer);
+    if (target2 == nullptr) {
         std::cerr << "Failed to load target2 texture! SDL Error: " << SDL_GetError() << std::endl;
         quitSDL(window, renderer);
         return 1;
@@ -75,49 +76,37 @@ int main(int argc, char* argv[]) {
     Timer myTimer;
     Maze mazeG;
     Player playerG(myTimer, mazeG);
+    playerG.setRenderer(renderer);
+    playerG.setFont(font);
+    playerG.setPlayer(player);
+    playerG.setTarget(target);
+    playerG.setTarget2(target2);
     // Bắt đầu trò chơi
     playerG.StartGame();
+    bool kt = false;
 
-    bool quit = false;
-    bool windowClosed = false; // Biến cờ để xác định liệu cửa sổ đã được đóng hay không
+    while (!kt) {
+    SDL_RenderCopy(renderer, background, NULL, NULL);
+    playerG.RenderMaze();
+    // Di chuyển người chơi
+    playerG.Move();
+    // Hiển thị renderer
+    SDL_RenderPresent(renderer);
+    kt = playerG.isGameFinished();
+    std::cout << playerG.isGameFinished() << std:: endl;
 
-    // Xử lý sự kiện và vòng lặp chính
-    while (!quit) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event) != 0) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-                windowClosed = true; // Đặt cờ thành true khi gặp sự kiện tắt cửa sổ
-            }
-        }
-
-        // Kiểm tra cờ trước khi xử lý di chuyển
-        if (!windowClosed) {
-            // Vẽ hình nền lên renderer
-            SDL_RenderCopy(renderer, background, NULL, NULL);
-            playerG.RenderMaze(renderer, font, playerTexture, targetTexture, target2Texture);
-
-            // Di chuyển người chơi
-            playerG.Move();
-            // Hiển thị renderer
-            SDL_RenderPresent(renderer);
-        }
-        // Reset cờ để chuẩn bị cho vòng lặp tiếp theo
-        windowClosed = false;
-    }
-
-    // Xử lý kết thúc trò chơi và hiển thị màn hình chiến thắng (nếu có)
-    if (playerG.isGameFinished()) {
-        playerG.WinnerScreen(renderer, font);
+}
+if (playerG.isGameFinished()) {
+        playerG.WinnerScreen();
         myTimer.stop();
         SDL_Delay(2500); // Chờ 2,5 giây trước khi thoát chương trình
     }
 
     // Giải phóng bộ nhớ và đóng SDL
     SDL_DestroyTexture(background);
-    SDL_DestroyTexture(playerTexture);
-    SDL_DestroyTexture(target2Texture);
-    SDL_DestroyTexture(targetTexture);
+    SDL_DestroyTexture(player);
+    SDL_DestroyTexture(target2);
+    SDL_DestroyTexture(target);
     quitSDL(window, renderer);
     TTF_CloseFont(font);
     TTF_Quit();
