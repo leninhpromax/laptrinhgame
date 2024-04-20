@@ -90,6 +90,8 @@ int main(int argc, char* argv[]) {
     playerG.RenderMaze();
     // Di chuyển người chơi
     playerG.Move();
+    playerG.renderBullet();
+
     // Hiển thị renderer
     SDL_RenderPresent(renderer);
     kt = playerG.isGameFinished();

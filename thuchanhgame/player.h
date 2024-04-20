@@ -25,8 +25,13 @@ private:
     int hiddenCount;
     bool gameFinished;
     bool gameQuit;
+    bool movedUp;
+    bool movedDown;
+    bool movedLeft;
+    bool movedRight;
     Timer myTimer;
     Maze mazeG;
+    Bullet bullet;
 
     TTF_Font* font;
     SDL_Renderer*renderer;
@@ -102,6 +107,11 @@ public:
     void Moveleft();
     void Moveright();
     void restartGame();
+    void renderBullet();
+    bool hasMovedUp() { return movedUp; }
+    bool hasMovedDown() { return movedDown; }
+    bool hasMovedLeft() { return movedLeft; }
+    bool hasMovedRight() { return movedRight; }
 
 };
 

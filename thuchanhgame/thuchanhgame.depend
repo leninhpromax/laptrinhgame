@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1713582221 source:d:\game\thuchanhgame\main.cpp
+1713601136 source:d:\game\thuchanhgame\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -850,10 +850,10 @@
 	<string>
 	<SDL.h>
 
-1713584648 source:d:\game\thuchanhgame\player.cpp
+1713606603 source:d:\game\thuchanhgame\player.cpp
 	"player.h"
 
-1713585536 d:\game\thuchanhgame\player.h
+1713604969 d:\game\thuchanhgame\player.h
 	<iostream>
 	<vector>
 	<SDL.h>
@@ -865,5 +865,6 @@
 	"man_hinh.h"
 	"bullet.h"
 
-1713524505 d:\game\thuchanhgame\bullet.h
+1713606766 d:\game\thuchanhgame\bullet.h
+	<cmath>
 

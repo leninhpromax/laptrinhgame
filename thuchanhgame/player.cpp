@@ -9,6 +9,10 @@ Player::Player(Timer& timer, Maze& maze) : myTimer(timer), mazeG(maze) {
     hiddenCount = 0;
     gameFinished = false;
     gameQuit = false;
+    movedUp = false;
+    movedDown = false;
+    movedLeft = false;
+    movedRight = false;
 }
 
 void Player::StartGame() {
@@ -28,7 +32,7 @@ int& Player::Replace(int row, int col) {
 
 void Player::Move() {
     SDL_Event e;
-    if (!isGameQuit()){
+    if (!isGameQuit()) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
@@ -38,23 +42,44 @@ void Player::Move() {
                         break;
                     case SDLK_w:
                         Moveup();
+                        movedUp = true;
+                        movedDown = false;
+                        movedLeft = false;
+                        movedRight = false;
                         break;
                     case SDLK_s:
                         Movedown();
+                        movedUp = false;
+                        movedDown = true;
+                        movedLeft = false;
+                        movedRight = false;
                         break;
                     case SDLK_a:
                         Moveleft();
+                        movedUp = false;
+                        movedDown = false;
+                        movedLeft = true;
+                        movedRight = false;
                         break;
                     case SDLK_d:
                        Moveright();
+                        movedUp = false;
+                        movedDown = false;
+                        movedLeft = false;
+                        movedRight = true;
+                        break;
+                    case SDLK_SPACE:
+                        // Bắn viên đạn với hướng di chuyển hiện tại của người chơi
+                         if (!bullet.isActive()) {
+                            bullet.Shoot(getRow(), getCol(), hasMovedUp(), hasMovedDown(), hasMovedLeft(), hasMovedRight());
+                        }
                         break;
                 }
-            } else if (e.type == SDL_QUIT) { // Nếu sự kiện là thoát khỏi chương trình
-                setGameFinished(true); // Đặt trạng thái kết thúc trò chơi thành true
+            } else if (e.type == SDL_QUIT) {
+                setGameFinished(true);
+            }
         }
-        }
-    }
-    else{
+    } else {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
@@ -64,14 +89,21 @@ void Player::Move() {
                         break;
                     case SDLK_r:
                         restartGame();
+                        break;
                 }
-            } else if (e.type == SDL_QUIT) { // Nếu sự kiện là thoát khỏi chương trình
-                setGameFinished(true); // Đặt trạng thái kết thúc trò chơi thành true
-        }
+            } else if (e.type == SDL_QUIT) {
+                setGameFinished(true);
+            }
         }
     }
+
+    // Di chuyển viên đạn
+    bullet.Move(mazek());
+
     SDL_Delay(10); // Đợi một chút để tránh di chuyển quá nhanh
-    RenderMaze(); // Vẽ lại mê cung sau khi di chuyển người chơi
+
+    // Vẽ lại mê cung sau khi di chuyển người chơi
+    RenderMaze();
 }
 
 void Player::RenderMaze() {
@@ -434,8 +466,22 @@ void Player::restartGame() {
     breakCount = 5;
     hiddenCount = 0;
     gameFinished = false;
+    gameQuit = false;
     // Bắt đầu lại đồng hồ
     myTimer.start();
     // Đặt lại vị trí của người chơi trong mê cung
     StartGame(); // Vị trí ban đầu của người chơi
+}
+
+  // Vẽ viên đạn lên màn hình
+void Player::renderBullet() {
+    if (bullet.isActive()) {
+        // Lấy vị trí của viên đạn
+        int bulletX = bullet.getCol() * CELL_SIZE;
+        int bulletY = bullet.getRow() * CELL_SIZE;
+
+         SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+        SDL_Rect bulletRect = { bulletX, bulletY, 10, 5 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
+        SDL_RenderFillRect(renderer, &bulletRect);
+    }
 }
