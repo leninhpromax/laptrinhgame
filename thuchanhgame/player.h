@@ -101,6 +101,7 @@ public:
     void Movedown();
     void Moveleft();
     void Moveright();
+    void restartGame();
 
 };
 

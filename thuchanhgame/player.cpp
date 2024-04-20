@@ -62,6 +62,8 @@ void Player::Move() {
                         setGameQuit(false);
                         myTimer.unpause();
                         break;
+                    case SDLK_r:
+                        restartGame();
                 }
             } else if (e.type == SDL_QUIT) { // Nếu sự kiện là thoát khỏi chương trình
                 setGameFinished(true); // Đặt trạng thái kết thúc trò chơi thành true
@@ -421,4 +423,19 @@ void Player::Moveright() {
     } else { // Nếu người chơi ở cột bên trái của mê cung
         setGameFinished(true); // Kết thúc trò chơi
     }
+}
+
+void Player::restartGame() {
+    // Đặt lại các giá trị ban đầu cho người chơi
+    playerRow = 1;
+    playerCol = 1;
+    blood = 500;
+    score = 0;
+    breakCount = 5;
+    hiddenCount = 0;
+    gameFinished = false;
+    // Bắt đầu lại đồng hồ
+    myTimer.start();
+    // Đặt lại vị trí của người chơi trong mê cung
+    StartGame(); // Vị trí ban đầu của người chơi
 }
