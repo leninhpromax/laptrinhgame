@@ -1,6 +1,8 @@
 #ifndef MAN_HINH_H
 #define MAN_HINH_H
 
+#include <vector>
+#include <tuple>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -14,7 +16,11 @@ struct WindowConfig {
 
 const WindowConfig WINDOW_CONFIG = { 1200, 800, "Game Window" };
 
-extern SDL_Color textColor; // Màu chữ textColor được sử dụng bên ngoài, được khai báo ở file main.cpp
+extern SDL_Color textColor;
+// Màu chữ đỏ
+ extern SDL_Color redColor;
+// Màu chữ xanh
+extern SDL_Color blueColor;
 
 // Hàm để ghi log lỗi và thoát khỏi SDL
 void logErrorAndExit(const char* msg, const char* error);
@@ -38,6 +44,7 @@ void renderTexture(SDL_Texture *texture, int x, int y, int width, int height, SD
 SDL_Texture *loadTexture(const char *filename, SDL_Renderer* renderer);
 
 // Khai báo hàm renderText để hiển thị văn bản lên renderer
-void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y);
+void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y, SDL_Color textColor);
+
 
 #endif // MAN_HINH_H

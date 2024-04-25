@@ -9,6 +9,7 @@ Player::Player(Timer& timer, Maze& maze) : myTimer(timer), mazeG(maze) {
     hiddenCount = 0;
     gameFinished = false;
     gameQuit = false;
+    restart = false;
     movedUp = false;
     movedDown = false;
     movedLeft = false;
@@ -62,7 +63,7 @@ void Player::Move() {
                         movedRight = false;
                         break;
                     case SDLK_d:
-                       Moveright();
+                        Moveright();
                         movedUp = false;
                         movedDown = false;
                         movedLeft = false;
@@ -81,6 +82,7 @@ void Player::Move() {
         }
     } else {
         while (SDL_PollEvent(&e) != 0) {
+
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
                     case SDLK_q:
@@ -88,7 +90,7 @@ void Player::Move() {
                         myTimer.unpause();
                         break;
                     case SDLK_r:
-                        restartGame();
+                        setReStart(true);
                         break;
                 }
             } else if (e.type == SDL_QUIT) {
@@ -96,7 +98,6 @@ void Player::Move() {
             }
         }
     }
-
     // Di chuyển viên đạn
     bullet.Move(mazek());
 
@@ -220,37 +221,84 @@ for (int i = 0; i < heightl / CELL_SIZE; i++) {
     }
 }
 }
-      // Hiển thị thời gian
-    std::stringstream time;
-    time << "Timer: " << static_cast<int>(myTimer.get_ticks() / 1000.f);
-    renderText(renderer, font, time.str().c_str(), 850, 100);
 
-    std::stringstream bloodString;
-     bloodString << "Blood: " << blood;
-    // Vẽ bloodString lên renderer
-    renderText(renderer, font, bloodString.str().c_str(), 850, 150);
+ // Hiển thị thông báo "Ready" và đếm ngược
+    if (isGameQuit() && isReStart()) {
+        Uint32 restartTime = SDL_GetTicks();
+        bool isReadyDisplayed = false;
+        bool isCountdownStarted = false;
 
-    std::stringstream scoreString;
-     scoreString << "Score: " << score;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, scoreString.str().c_str(), 850, 200);
+        while (SDL_GetTicks() - restartTime <= 4000) {
+            if (!isReadyDisplayed && SDL_GetTicks() - restartTime >= 1000) {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                SDL_Rect whiteRect = {300, 350, 200, 100};
+                SDL_RenderFillRect(renderer, &whiteRect);
 
-     std::stringstream hiddenCountString;
-     hiddenCountString << "hiddenCount: " << hiddenCount;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, hiddenCountString.str().c_str(), 850, 250);
+                std::stringstream readyText;
+                readyText << "Ready";
+                renderText(renderer, font, readyText.str().c_str(), 150, 400, blueColor);
+                isReadyDisplayed = true;
+            } else if (!isCountdownStarted && SDL_GetTicks() - restartTime >= 2000) {
+                isCountdownStarted = true;
+            }
 
-     std::stringstream breakCountString;
-     breakCountString << "breakCount: " << breakCount;
-    // Vẽ scoreString lên renderer
-    renderText(renderer, font, breakCountString.str().c_str(), 850, 300);
+            if (isCountdownStarted) {
+                int countdown = (4000 - (SDL_GetTicks() - restartTime)) / 1000 + 1;
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                SDL_Rect whiteRect = {350, 350, 100, 100};
+                SDL_RenderFillRect(renderer, &whiteRect);
 
-  SDL_RenderPresent(renderer); // Hiển thị lên màn hình
+                std::stringstream countdownText;
+                countdownText << countdown;
+                renderText(renderer, font, countdownText.str().c_str(), 150, 400, blueColor);
+            }
+
+            if (isReadyDisplayed && isCountdownStarted && SDL_GetTicks() - restartTime >= 4000) {
+                setReStart(false);
+                restartGame();
+                break;
+            }
+        }
+    }
+
+    // Hiển thị hướng dẫn khi game đang tạm dừng
+    if (isGameQuit() && !isReStart()) {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_Rect whiteRect = {125, 350, 550, 100};
+        SDL_RenderFillRect(renderer, &whiteRect);
+
+        std::stringstream instructionText;
+        instructionText << "Press Q to Continue or Press R to Restart";
+        renderText(renderer, font, instructionText.str().c_str(), 150, 400, blueColor);
+    }
+
+    // Hiển thị thời gian, điểm, và thông tin khác
+    std::stringstream timeText;
+    timeText << "Timer: " << static_cast<int>(myTimer.get_ticks() / 1000.f);
+    renderText(renderer, font, timeText.str().c_str(), 850, 100, textColor);
+
+    std::stringstream bloodText;
+    bloodText << "Blood: " << blood;
+    renderText(renderer, font, bloodText.str().c_str(), 850, 150, textColor);
+
+    std::stringstream scoreText;
+    scoreText << "Score: " << score;
+    renderText(renderer, font, scoreText.str().c_str(), 850, 200, textColor);
+
+    std::stringstream hiddenCountText;
+    hiddenCountText << "hiddenCount: " << hiddenCount;
+    renderText(renderer, font, hiddenCountText.str().c_str(), 850, 250, textColor);
+
+    std::stringstream breakCountText;
+    breakCountText << "breakCount: " << breakCount;
+    renderText(renderer, font, breakCountText.str().c_str(), 850, 300, textColor);
+
+    SDL_RenderPresent(renderer); // Hiển thị lên màn hình
 }
 
 void Player::WinnerScreen() {
-    // Xóa màn hình
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+     // Xóa màn hình và đặt màu nền là màu trắng
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
     // Tính thời gian đã chơi
@@ -258,16 +306,16 @@ void Player::WinnerScreen() {
 
     std::stringstream winText;
     winText << "Win" ;
-    renderText(renderer, font, winText.str().c_str(), 400, 400);
+    renderText(renderer, font, winText.str().c_str(), 400, 400, blueColor);
 
     // Hiển thị điểm số và thời gian chơi
     std::stringstream scoreText;
     scoreText << "Your score: " << score << " seconds";
-    renderText(renderer, font, scoreText.str().c_str(), 400, 600);
+    renderText(renderer, font, scoreText.str().c_str(), 400, 600, blueColor);
 
     std::stringstream timeText;
     timeText << "Time: " << TimeInSeconds << " seconds";
-    renderText(renderer, font, timeText.str().c_str(), 400, 500);
+    renderText(renderer, font, timeText.str().c_str(), 400, 500, blueColor);
 
     // Hiển thị lên màn hình
     SDL_RenderPresent(renderer);
@@ -281,6 +329,7 @@ void Player::Moveup() {
                 if (breakCount > 0) {
                     breakCount--;
                     mazek()[playerRow - 1][playerCol] = 1; // Phá gạch và di chuyển lên
+
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
                 }
@@ -418,6 +467,7 @@ void Player::Moveright() {
             if (nextCell == 4) { // Nếu ô tiếp theo là gạch và người chơi còn cơ hội phá
                 if (breakCount > 0) {
                     breakCount--;
+
                     mazek()[playerRow][playerCol + 1] = 1; // Phá gạch và di chuyển sang phải
                 } else {
                     return; // Không thực hiện di chuyển nếu không còn cơ hội phá gạch
@@ -467,21 +517,27 @@ void Player::restartGame() {
     hiddenCount = 0;
     gameFinished = false;
     gameQuit = false;
+    restart = false;
     // Bắt đầu lại đồng hồ
     myTimer.start();
     // Đặt lại vị trí của người chơi trong mê cung
     StartGame(); // Vị trí ban đầu của người chơi
 }
 
-  // Vẽ viên đạn lên màn hình
+ // Vẽ viên đạn lên màn hình
 void Player::renderBullet() {
     if (bullet.isActive()) {
         // Lấy vị trí của viên đạn
         int bulletX = bullet.getCol() * CELL_SIZE;
         int bulletY = bullet.getRow() * CELL_SIZE;
-
-         SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
-        SDL_Rect bulletRect = { bulletX, bulletY, 10, 5 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
-        SDL_RenderFillRect(renderer, &bulletRect);
+        if (hasMovedDown() || hasMovedUp()){
+            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+            SDL_Rect bulletRect = { bulletX + 5, bulletY, 5, 10 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
+            SDL_RenderFillRect(renderer, &bulletRect);
+        } else if(hasMovedLeft() || hasMovedRight()){
+            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+            SDL_Rect bulletRect = { bulletX , bulletY + 5, 10, 5 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
+            SDL_RenderFillRect(renderer, &bulletRect);
+        }
     }
 }

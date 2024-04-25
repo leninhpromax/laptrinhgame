@@ -6,6 +6,8 @@
 #include "code_me_cung.h"
 #include "time.h"
 #include "player.h"
+#include "boss.h"
+
 
 int main(int argc, char* argv[]) {
     // Khởi tạo SDL và tạo cửa sổ
@@ -56,6 +58,20 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+     SDL_Texture* playerLeft = loadTexture("playerleft.png", renderer);
+    if (playerLeft == nullptr) {
+        std::cerr << "Failed to load playerleft texture! SDL Error: " << SDL_GetError() << std::endl;
+        quitSDL(window, renderer);
+        return 1;
+    }
+
+     SDL_Texture* playerRight = loadTexture("playerright.png", renderer);
+    if (playerLeft == nullptr) {
+        std::cerr << "Failed to load playerright texture! SDL Error: " << SDL_GetError() << std::endl;
+        quitSDL(window, renderer);
+        return 1;
+    }
+
     // Khởi tạo SDL_ttf
     if (TTF_Init() == -1) {
         std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
@@ -64,9 +80,17 @@ int main(int argc, char* argv[]) {
     }
 
     // Load font
-    TTF_Font* font = TTF_OpenFont("font.ttf", 32);
+    TTF_Font* font = TTF_OpenFont("font.ttf", 36);
     if (font == nullptr) {
         std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
+        quitSDL(window, renderer);
+        TTF_Quit();
+        return 1;
+    }
+
+     TTF_Font* font1 = TTF_OpenFont("font.ttf", 60);
+    if (font1 == nullptr) {
+        std::cerr << "Failed to load font1! SDL_ttf Error: " << TTF_GetError() << std::endl;
         quitSDL(window, renderer);
         TTF_Quit();
         return 1;
@@ -78,13 +102,16 @@ int main(int argc, char* argv[]) {
     Player playerG(myTimer, mazeG);
     playerG.setRenderer(renderer);
     playerG.setFont(font);
+    playerG.setFont1(font1);
     playerG.setPlayer(player);
     playerG.setTarget(target);
     playerG.setTarget2(target2);
+    playerG.setplayerLeft(playerLeft);
+    playerG.setplayerRight(playerRight);
     // Bắt đầu trò chơi
     playerG.StartGame();
-    bool kt = false;
 
+    bool kt = false;
     while (!kt) {
     SDL_RenderCopy(renderer, background, NULL, NULL);
     playerG.RenderMaze();

@@ -11,6 +11,7 @@
 #include "code_me_cung.h"
 #include "man_hinh.h"
 #include "bullet.h"
+#include "boss.h"
 
 const int VIEW_SIZE = 40; // Kích thước màn hình 40x40 ô
 const int CELL_SIZE = 20; // Kích thước của mỗi ô
@@ -29,15 +30,20 @@ private:
     bool movedDown;
     bool movedLeft;
     bool movedRight;
+    bool restart;
     Timer myTimer;
     Maze mazeG;
     Bullet bullet;
 
     TTF_Font* font;
-    SDL_Renderer*renderer;
+    TTF_Font* font1;
+    SDL_Renderer* renderer;
     SDL_Texture* player;
     SDL_Texture* target;
     SDL_Texture* target2;
+    SDL_Texture* playerLeft;
+    SDL_Texture* playerRight;
+
 public:
     Player(Timer& timer, Maze& maze); // Constructor với Timer và Maze
     void StartGame();
@@ -71,6 +77,14 @@ public:
         return gameQuit;
     }
 
+    bool isReStart() {
+        return restart;
+    }
+
+    void setReStart(bool reS) {
+        restart = reS;
+    }
+
     void setGameFinished(bool finished) {
         gameFinished = finished;
     }
@@ -86,6 +100,10 @@ public:
         font = f;
     }
 
+    void setFont1(TTF_Font* f1) {
+        font1 = f1;
+    }
+
     void setPlayer(SDL_Texture* p) {
         player = p;
     }
@@ -98,9 +116,16 @@ public:
         target2 = t2;
     }
 
-    int& Replace(int row, int col);
+    void setplayerLeft(SDL_Texture* pl) {
+        playerLeft = pl;
+    }
 
-    void RenderMaze(); // Loại bỏ tham số renderer
+    void setplayerRight(SDL_Texture* pr) {
+        playerRight = pr;
+    }
+
+    int& Replace(int row, int col);
+    void RenderMaze();
     void WinnerScreen();
     void Moveup();
     void Movedown();

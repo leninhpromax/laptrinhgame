@@ -1,6 +1,13 @@
 #include "man_hinh.h"
 
-SDL_Color textColor = { 255, 255, 255 }; // Màu chữ mặc định, sử dụng để hiển thị văn bản
+// Màu chữ mặc định, sử dụng để hiển thị văn bản
+SDL_Color textColor = { 255, 255, 255 };
+
+// Màu chữ đỏ
+SDL_Color redColor = { 255, 0, 0 };
+
+// Màu chữ xanh
+SDL_Color blueColor = { 0, 0, 255 };
 
 void logErrorAndExit(const char* msg, const char* error) {
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR, "%s: %s", msg, error);
@@ -84,7 +91,7 @@ SDL_Texture* loadTexture(const char* filename, SDL_Renderer* renderer) {
     return texture;
 }
 
-void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y) {
+void renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y, SDL_Color textColor) {
     // Tạo surface chứa văn bản
     SDL_Surface* surface = TTF_RenderText_Solid(font, text, textColor);
     if (surface == nullptr) {
