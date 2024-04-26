@@ -24,6 +24,8 @@ rường ở cuối cùng là rương thưởng tượng trưng cho chiến
 phần bên phải này là chức năng 
 ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/4a62e7dd-baca-440c-af37-669f9372f272)
 bao gồm thời gian đã chơi, máu người chơi mặc định là 500, điểm số, số rương ăn được, và số lần phá tường, số bước di chuyển run.
+![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/01441dcf-07a8-4f91-a079-d98b4fb34d63)
+thực hiện nhấn phím space để bắn đạn 
 3, khi muốn tạm dừng thì bấm phím 'q' sẽ cho tạm dừng và hiện lên thông báo
 ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/601347fb-8846-4d36-9555-cd8b89826dd3)
 nếu nhấn tiếp phím 'q' thì trò chơi sẽ được tiếp tục 
