@@ -49,7 +49,10 @@
 			<Add directory="C:/SDL2.dll/SDL2_ttf-devel-2.22.0-mingw/SDL2_ttf-2.22.0/i686-w64-mingw32/lib" />
 			<Add directory="C:/SDL2.dll/SDL2_mixer-devel-2.8.0-mingw/SDL2_mixer-2.8.0/i686-w64-mingw32/lib" />
 		</Linker>
-		<Unit filename="boss.cpp" />
+		<Unit filename="boss.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="boss.h" />
 		<Unit filename="bullet.h" />
 		<Unit filename="code_me_cung.cpp" />
