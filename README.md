@@ -1,4 +1,6 @@
 tất cả các hìnha nrh sử dụng trong file này đều là do copilot vẽ và sau đó sửa lại 1 số ảnh bằng cách xóa nền
+![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/16202444-71a3-4455-b222-3868b9d9a790)
+
 đoạn code timer của file time.h và time.cpp là tham khảo code từ link lazyfoo dạy học từ cơ bản này  https://www.lazyfoo.net/SDL_tutorials/index.php và link của timer là https://www.lazyfoo.net/SDL_tutorials/lesson13/index.php
 đoạn code này có hỏi chatgpt về cách tạo ra mấu ngẫu nhiên nằm trong hàm GenerateRandomWalls() của classs Maze
     std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
@@ -6,6 +8,11 @@ tất cả các hìnha nrh sử dụng trong file này đều là do copilot v�
     std::mt19937 gen(tp.time_since_epoch().count());
     // Tạo phân phối số nguyên đồng đều trong phạm vi [0, ROWS * COLUMNS - 1]
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
+chương trình vẫn chưua được hoàn thiện bị thiếu đi tính năng quái, câu đố
+
+
+phần code tìm chìa khóa midemtyspace có tham khảo sự hỗ trợ của chatgpt
+Đường link đến video là https://www.youtube.com/watch?v=mce5OUTSCPw
 
 
 1, khi bắt đầu game màn hình sẽ hiện ra
