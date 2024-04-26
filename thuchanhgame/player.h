@@ -33,6 +33,7 @@ private:
     bool movedLeft;
     bool movedRight;
     bool newgame;
+    bool key;
     Timer myTimer;
     Maze mazeG;
     Bullet bullet;

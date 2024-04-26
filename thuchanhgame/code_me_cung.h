@@ -25,6 +25,7 @@ public:
     void FixError();
     void BreakWalls();
     std::pair<int, int> EmptySpace();
+    std::pair<int, int> MiddleEmptySpace();
     int& Cells(int row, int col);
     void Game();
 };

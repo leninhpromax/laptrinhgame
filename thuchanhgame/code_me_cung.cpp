@@ -3,6 +3,7 @@
 #include <random>
 #include <ctime>
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -191,7 +192,7 @@ void Maze::BreakWalls() {
         }
     }
 }
-
+// vị trí rương đích
 std::pair<int, int> Maze::EmptySpace() {
     int endRow = ROWS - 2; // Hàng cuối cùng
     int endCol = COLUMNS - 2; // Cột cuối cùng
@@ -208,6 +209,40 @@ std::pair<int, int> Maze::EmptySpace() {
     return std::make_pair(ROWS-2, COLUMNS-2);
 }
 
+// vị trí của chìa khóa
+std::pair<int, int> Maze::MiddleEmptySpace() {
+        int startRow = ROWS / 2; // Hàng giữa của mê cung
+        int startCol = COLUMNS / 2; // Cột giữa của mê cung
+
+        // Kiểm tra vị trí trung tâm của mê cung
+        if (maze[startRow][startCol] == 1) {
+            return std::make_pair(startRow, startCol);
+        }
+
+        // Tìm vị trí trống gần vị trí trung tâm theo chiều dọc
+        for (int i = 1; i < ROWS / 2; ++i) {
+            if (startRow - i >= 0 && maze[startRow - i][startCol] == 1) {
+                return std::make_pair(startRow - i, startCol);
+            }
+            if (startRow + i < ROWS && maze[startRow + i][startCol] == 1) {
+                return std::make_pair(startRow + i, startCol);
+            }
+        }
+
+        // Tìm vị trí trống gần vị trí trung tâm theo chiều ngang
+        for (int j = 1; j < COLUMNS / 2; ++j) {
+            if (startCol - j >= 0 && maze[startRow][startCol - j] == 1) {
+                return std::make_pair(startRow, startCol - j);
+            }
+            if (startCol + j < COLUMNS && maze[startRow][startCol + j] == 1) {
+                return std::make_pair(startRow, startCol + j);
+            }
+        }
+
+        // Nếu không tìm thấy vị trí trống gần trung tâm, trả về vị trí cuối cùng của mê cung
+        return std::make_pair(ROWS - 3, COLUMNS - 3);
+    };
+
 int& Maze::Cells(int row, int col) {
     return maze[row][col];
 }
@@ -223,4 +258,8 @@ void Maze::Game(){
     int endRow = destination.first;
     int endCol = destination.second;
     Cells(endRow, endCol) = 6;
+    std::pair<int, int> destination2 = MiddleEmptySpace();
+    int endRow1 = destination2.first;
+    int endCol1 = destination2.second;
+    Cells(endRow1, endCol1) = 7;
 }

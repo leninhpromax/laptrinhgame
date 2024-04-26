@@ -8,6 +8,7 @@ Player::Player(Timer& timer, Maze& maze, Bullet& bullet) : myTimer(timer), mazeG
     breakCount = 5;
     hiddenCount = 0;
     run = 0;
+    key = false;
     win = false;
     gameFinished = false;
     gameQuit = false;
@@ -165,6 +166,11 @@ void Player::RenderMaze() {
                 case 6:
                     renderTexture(target2, x, y, CELL_SIZE, CELL_SIZE, renderer);
                     break;
+                case 7:
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                    renderTexture(target3, x, y, CELL_SIZE, CELL_SIZE, renderer);
+                    break;
                 default:
                     break;
                     }
@@ -223,6 +229,11 @@ for (int i = 0; i < heightl / CELL_SIZE; i++) {
                     break;
                 case 6:
                     renderTexture(target2, x, y, CELL_SIZE, CELL_SIZE, renderer);
+                    break;
+                case 7:
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                    renderTexture(target3, x, y, CELL_SIZE, CELL_SIZE, renderer);
                     break;
                 default:
                     break;
@@ -305,6 +316,9 @@ if (isReStart()){
     std::stringstream breakCountText;
     breakCountText << "breakCount: " << breakCount;
     renderText(renderer, font, breakCountText.str().c_str(), 850, 500, textColor);
+    if (key == true){
+    renderTexture(target3, 850, 750, 40, 40, renderer);
+    }
 
     SDL_RenderPresent(renderer); // Hiển thị lên màn hình
 }
@@ -383,6 +397,8 @@ void Player::Moveup() {
             if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
                 score += randomScore; // Tăng điểm
+            } else if (nextCell == 7){
+                key = true;
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 5 + 1;
@@ -408,8 +424,13 @@ void Player::Moveup() {
             return; // Không thực hiện di chuyển
         }
         else if(nextCell == 6){
-            win = true;
+                if (key == true){
+                    win = true;
             setGameFinished(true);
+                }
+            else {
+                return;
+            }
         } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
@@ -433,9 +454,11 @@ void Player::Movedown() {
             }
             mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
             playerRow++; // Di chuyển xuống
-            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
+             if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
                 score += randomScore; // Tăng điểm
+            } else if (nextCell == 7){
+                key = true;
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 5 + 1;
@@ -459,10 +482,19 @@ void Player::Movedown() {
             mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
         } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
             return; // Không thực hiện di chuyển
+        }
+        else if(nextCell == 6){
+                if (key == true){
+                    win = true;
+            setGameFinished(true);
+                }
+            else {
+                return;
+            }
         } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
-    } else { // Nếu người chơi ở hàng dưới cùng của mê cung
+    } else { // Nếu người chơi ở hàng trên cùng của mê cung
         setGameFinished(true); // Kết thúc trò chơi
     }
 }
@@ -482,9 +514,11 @@ void Player::Moveleft() {
             }
             mazek()[playerRow][playerCol] = 1; // Đánh dấu ô hiện tại là đã đi qua
             playerCol--; // Di chuyển sang trái
-            if (nextCell == 2) { // Nếu ô tiếp theo là điểm
+             if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
                 score += randomScore; // Tăng điểm
+            } else if (nextCell == 7){
+                key = true;
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 5 + 1;
@@ -508,10 +542,19 @@ void Player::Moveleft() {
             mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
         } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
             return; // Không thực hiện di chuyển
+        }
+        else if(nextCell == 6){
+                if (key == true){
+                    win = true;
+            setGameFinished(true);
+                }
+            else {
+                return;
+            }
         } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
-    } else { // Nếu người chơi ở cột bên trái của mê cung
+    } else { // Nếu người chơi ở hàng trên cùng của mê cung
         setGameFinished(true); // Kết thúc trò chơi
     }
 }
@@ -535,6 +578,8 @@ void Player::Moveright() {
             if (nextCell == 2) { // Nếu ô tiếp theo là điểm
                 int randomScore = rand() % 3 + 1;
                 score += randomScore; // Tăng điểm
+            } else if (nextCell == 7){
+                key = true;
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
                 int hidden = rand() % 5 + 1;
@@ -558,10 +603,19 @@ void Player::Moveright() {
             mazek()[playerRow][playerCol] = 5; // Đánh dấu ô mới mà người chơi đến
         } else if (nextCell == 0) { // Nếu ô tiếp theo là tường
             return; // Không thực hiện di chuyển
+        }
+        else if(nextCell == 6){
+                if (key == true){
+                    win = true;
+            setGameFinished(true);
+                }
+            else {
+                return;
+            }
         } else { // Nếu người chơi chạm vào tường hoặc hết máu
             setGameFinished(true);
         }
-    } else { // Nếu người chơi ở cột bên trái của mê cung
+    } else { // Nếu người chơi ở hàng trên cùng của mê cung
         setGameFinished(true); // Kết thúc trò chơi
     }
 }
@@ -579,6 +633,7 @@ void Player::restartGame() {
     gameQuit = false;
     restart = true;
     newgame = true;
+    key = false;
     // Đặt lại vị trí của người chơi trong mê cung
     StartGame(); // Vị trí ban đầu của người chơi
 }
@@ -615,10 +670,10 @@ void Player::renderBullet() {
                             // Vẽ viên đạn lên màn hình
                             SDL_Rect bulletRect;
                             if (hasMovedDown() || hasMovedUp()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+                                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Màu đen
                                 bulletRect = { x + 5, y, 5, 10 };
                             } else if (hasMovedLeft() || hasMovedRight()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+                                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Màu đen
                                 bulletRect = { x, y + 5, 10, 5 };
                             }
                             SDL_RenderFillRect(renderer, &bulletRect);
@@ -656,10 +711,10 @@ void Player::renderBullet() {
                             // Vẽ viên đạn lên màn hình
                             SDL_Rect bulletRect;
                             if (hasMovedDown() || hasMovedUp()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+                                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Màu đen
                                 bulletRect = { x + 5, y, 5, 10 };
                             } else if (hasMovedLeft() || hasMovedRight()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+                                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Màu đen
                                 bulletRect = { x, y + 5, 10, 5 };
                             }
                             SDL_RenderFillRect(renderer, &bulletRect);

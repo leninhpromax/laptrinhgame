@@ -9,7 +9,7 @@
 	"time.h"
 	"player.h"
 
-1714095890 d:\game\thuchanhgame\code_me_cung.h
+1714134897 d:\game\thuchanhgame\code_me_cung.h
 	<chrono>
 	<algorithm>
 	<random>
@@ -19,12 +19,13 @@
 	<ctime>
 	<cstdlib>
 
-1714095890 source:d:\game\thuchanhgame\code_me_cung.cpp
+1714135668 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
 	<ctime>
 	<iostream>
+	<utility>
 	<vector>
 	<SDL.h>
 	<SDL_image.h>
@@ -852,10 +853,10 @@
 	<string>
 	<SDL.h>
 
-1714131870 source:d:\game\thuchanhgame\player.cpp
+1714135946 source:d:\game\thuchanhgame\player.cpp
 	"player.h"
 
-1714132504 d:\game\thuchanhgame\player.h
+1714134890 d:\game\thuchanhgame\player.h
 	<iostream>
 	<vector>
 	<SDL.h>
