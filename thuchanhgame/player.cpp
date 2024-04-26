@@ -633,6 +633,7 @@ void Player::restartGame() {
     gameQuit = false;
     restart = true;
     newgame = true;
+    win = false;
     key = false;
     // Đặt lại vị trí của người chơi trong mê cung
     StartGame(); // Vị trí ban đầu của người chơi
@@ -733,7 +734,7 @@ void Player::AskForContinue() {
 
     // Hiển thị thông báo yêu cầu người chơi chọn
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_Rect whiteRect = {325, 300, 550, 100}; // Cập nhật tọa độ cho màn hình 1200x800
+    SDL_Rect whiteRect = {325, 300, 600, 300}; // Cập nhật tọa độ cho màn hình 1200x800
     SDL_RenderFillRect(renderer, &whiteRect);
 
     std::stringstream continueText;
