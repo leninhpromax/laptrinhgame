@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1714118376 source:d:\game\thuchanhgame\main.cpp
+1714129600 source:d:\game\thuchanhgame\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -8,7 +8,6 @@
 	"code_me_cung.h"
 	"time.h"
 	"player.h"
-	"boss.h"
 
 1714095890 d:\game\thuchanhgame\code_me_cung.h
 	<chrono>
@@ -868,7 +867,7 @@
 	"man_hinh.h"
 	"bullet.h"
 
-1714099499 d:\game\thuchanhgame\bullet.h
+1714125088 d:\game\thuchanhgame\bullet.h
 	<cmath>
 	<vector>
 	"player.h"

@@ -154,7 +154,6 @@ if (!kt){
     playerG.RenderMaze();
     // Di chuyển người chơi
     playerG.Move();
-    playerG.renderBullet();
 
     // Hiển thị renderer
     SDL_RenderPresent(renderer);
