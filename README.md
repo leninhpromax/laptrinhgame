@@ -1,4 +1,9 @@
-tất cả các hìnha nrh sử dụng trong file này đều là do copilot vẽ và sau đó sửa lại 1 số ảnh bằng cách xóa nền
+cách tải game tải game tại link [text](<../game (4).zip>)
+ hoặc ó thể tải trự ctieeps tại đường link này https://github.com/leninhpromax/laptrinhgame
+ ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/20ef1fac-99a6-485c-94b2-4c5d2f212ab9)
+
+ 
+tất cả các hình ảnh sử dụng trong file này đều là do copilot vẽ và sau đó sửa lại 1 số ảnh bằng cách xóa nền
 ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/16202444-71a3-4455-b222-3868b9d9a790)
 
 đoạn code timer của file time.h và time.cpp là tham khảo code từ link lazyfoo dạy học từ cơ bản này  https://www.lazyfoo.net/SDL_tutorials/index.php và link của timer là https://www.lazyfoo.net/SDL_tutorials/lesson13/index.php
@@ -10,8 +15,8 @@ tất cả các hìnha nrh sử dụng trong file này đều là do copilot v�
     std::uniform_int_distribution<> dist(0, ROWS * COLUMNS - 1);
 chương trình vẫn chưua được hoàn thiện bị thiếu đi tính năng quái, câu đố
 
-
 phần code tìm chìa khóa midemtyspace có tham khảo sự hỗ trợ của chatgpt
+
 Đường link đến video là https://www.youtube.com/watch?v=mce5OUTSCPw
 
 
@@ -42,6 +47,22 @@ khi không muốn chơi nữa thì sẽ bấm nút tắt ở trên cùng màn h�
 và sau đó là thông báo hỏi xem bạn có muốn chơi nữa không 
 ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/0eb86dc5-a6c2-4c60-8ee6-fb52180bda2c)
 nếu bạn bấm vào phím 'y' thì nó sẽ đưa ra trờ chơi mới cho bạn còn nếu bấm phím 'n' thì chỉ cần chờ 2 giây chương trình sẽ tự kết thúc 
+
+4, Cập nhất về cấu trúc game
+Mục tiêu cần tìm là chìa khóa và rương đích
++ chìa khóa thì nằm ở nơi bất kì nên sẽ khó hơn do nằm ở vị trí bất kì
++ rương luốn nằm ở dưới cùng mê cung bên phải
++ có được chìa khóa mới mở được rương và chiến thắng
+Các biến liên quan
++ tường màu đỏ là tường không thể phá
++ tường màu tím có thể phá được nếu có breakcount hoặc bullet
++ những ô màu xanh lá là những ô mình có thể di chuyển bình thường
++ đạn có màu đen và bắn đạn bằng cách nhấn phím space còn đạn sẽ di chuyển theo đường thẳng, hướng là hướng quay trước khi bắn và sẽ phá hủy tất cả tường tím trên đường nó đi và chỉ mất khi gặp tường đỏ (những vật phẩm khác không bị ảnh hương)
++ những hình cô tiên sẽ giúp được cộng từ 1 đến 3 điểm
++ khi ăn rương trên đường đi sẽ được thưởng 1 breakcount hoặc 1 bullet hoặc cộng thêm 50 máu hoặc cộng thêm 1 đến 3 điểm nhưng nếu đen thì bạn sẽ bị dính bom ẩn trừ từ 10 đến 100 máu
++ khi máu về 0 thì trò chơi sẽ kết thúc
++ khi nào mà người chơi không muốn chơi nữa có thể bấm phím tắt ở phía trên màn hình và chờ đợi để hiện thông báo 'do you ưant to continue' và nhấn phím 'y' để chơi mới hoặc là nhấn phím 'n' để thoát
++ mỗi lần di chuyển sẽ cộng thêm 1 vào biến run đến số bước di chuyển
 
 
 
