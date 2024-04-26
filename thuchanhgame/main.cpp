@@ -112,7 +112,8 @@ int main(int argc, char* argv[]) {
     // Khởi tạo Timer và Maze
     Timer myTimer;
     Maze mazeG;
-    Player playerG(myTimer, mazeG);
+    Bullet bullet;
+    Player playerG(myTimer, mazeG, bullet);
     playerG.setRenderer(renderer);
     playerG.setFont(font);
     playerG.setFont1(font1);

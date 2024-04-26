@@ -1,6 +1,6 @@
 #include "player.h"
 
-Player::Player(Timer& timer, Maze& maze) : myTimer(timer), mazeG(maze) {
+Player::Player(Timer& timer, Maze& maze, Bullet& bullet) : myTimer(timer), mazeG(maze), bullet(bullet) {
     playerRow = 1;
     playerCol = 1;
     blood = 500;
@@ -290,6 +290,10 @@ if (isReStart()){
     bloodText << "Blood: " << blood;
     renderText(renderer, font, bloodText.str().c_str(), 850, 200, textColor);
 
+    std::stringstream bulletText;
+    bulletText << "Bullet: " << bullet.GetBulletCount();
+    renderText(renderer, font, bulletText.str().c_str(), 850, 600, textColor);
+
     std::stringstream scoreText;
     scoreText << "Score: " << score;
     renderText(renderer, font, scoreText.str().c_str(), 850, 300, textColor);
@@ -381,7 +385,7 @@ void Player::Moveup() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 4 + 1;
+                int hidden = rand() % 5 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -389,6 +393,8 @@ void Player::Moveup() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
+                } else if (hidden == 4) {
+                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -432,7 +438,7 @@ void Player::Movedown() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 4 + 1;
+                int hidden = rand() % 5 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -440,6 +446,8 @@ void Player::Movedown() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
+                } else if (hidden == 4) {
+                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -479,7 +487,7 @@ void Player::Moveleft() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 4 + 1;
+                int hidden = rand() % 5 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -487,6 +495,8 @@ void Player::Moveleft() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
+                } else if (hidden == 4) {
+                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -527,7 +537,7 @@ void Player::Moveright() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 4 + 1;
+                int hidden = rand() % 5 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -535,6 +545,8 @@ void Player::Moveright() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
+                } else if (hidden == 4) {
+                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;

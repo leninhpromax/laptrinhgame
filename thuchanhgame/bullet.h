@@ -14,28 +14,32 @@ private:
     bool playerMovedDown;
     bool playerMovedLeft;
     bool playerMovedRight;
+    int bulletCount; // Số lượng viên đạn còn
 
 public:
-    Bullet() : currentRow(0), currentCol(0), isActive(false), shootingAngle(0.0f) {}
+    Bullet() : currentRow(0), currentCol(0), isActive(false), shootingAngle(0.0f), bulletCount(5) {}
 
     // Bắn viên đạn từ vị trí (startRow, startCol) dựa trên hướng di chuyển của người chơi
     void Shoot(int startRow, int startCol, bool playerMovedUp, bool playerMovedDown, bool playerMovedLeft, bool playerMovedRight) {
-        currentRow = startRow;
-        currentCol = startCol;
-        this->startRow = startRow;
-        this->startCol = startCol;
-        // Xác định góc bắn dựa trên hướng di chuyển của người chơi
-        if (playerMovedUp) {
-            shootingAngle = -M_PI / 2; // Bắn lên trên
-        } else if (playerMovedDown) {
-            shootingAngle = M_PI / 2; // Bắn xuống dưới
-        } else if (playerMovedLeft) {
-            shootingAngle = M_PI; // Bắn sang trái
-        } else if (playerMovedRight) {
-            shootingAngle = 0; // Bắn sang phải
-        }
+        if (bulletCount > 0) { // Kiểm tra xem còn viên đạn không
+            currentRow = startRow;
+            currentCol = startCol;
+            this->startRow = startRow;
+            this->startCol = startCol;
+            // Xác định góc bắn dựa trên hướng di chuyển của người chơi
+            if (playerMovedUp) {
+                shootingAngle = -M_PI / 2; // Bắn lên trên
+            } else if (playerMovedDown) {
+                shootingAngle = M_PI / 2; // Bắn xuống dưới
+            } else if (playerMovedLeft) {
+                shootingAngle = M_PI; // Bắn sang trái
+            } else if (playerMovedRight) {
+                shootingAngle = 0; // Bắn sang phải
+            }
 
-        isActive = true;
+            isActive = true;
+            bulletCount--; // Giảm số lượng viên đạn sau khi bắn
+        }
     }
 
     // Di chuyển viên đạn theo góc đã bắn
@@ -54,10 +58,15 @@ public:
             int newRow = static_cast<int>(newY);
             int newCol = static_cast<int>(newX);
 
-            if (maze[newRow][newCol] != 0 && maze[newRow][newCol] != 4) {
-                // Nếu viên đạn không va chạm với tường hoặc cổng bí mật
-                currentRow = newRow;
-                currentCol = newCol;
+            if (maze[newRow][newCol] != 0) {
+                // Nếu viên đạn không va chạm với tường
+                if (maze[newRow][newCol] == 4) {
+                    // Nếu viên đạn va chạm với tường có giá trị 4
+                    maze[newRow][newCol] = 1; // Biến tường thành không gian trống
+                } else {
+                    currentRow = newRow;
+                    currentCol = newCol;
+                }
             } else {
                 isActive = false; // Khi viên đạn va chạm, vô hiệu hóa nó
             }
@@ -77,5 +86,13 @@ public:
     // Lấy cột của viên đạn
     int GetCol() const {
         return currentCol;
+    }
+
+    int GetBulletCount() {
+        return bulletCount;
+    }
+    // Phương thức để tăng số lượng viên đạn lên 1 đơn vị
+    void plusBulletCount() {
+        bulletCount++;
     }
 };
