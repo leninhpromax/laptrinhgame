@@ -852,10 +852,10 @@
 	<string>
 	<SDL.h>
 
-1714131122 source:d:\game\thuchanhgame\player.cpp
+1714131870 source:d:\game\thuchanhgame\player.cpp
 	"player.h"
 
-1714130531 d:\game\thuchanhgame\player.h
+1714131870 d:\game\thuchanhgame\player.h
 	<iostream>
 	<vector>
 	<SDL.h>
@@ -867,7 +867,7 @@
 	"man_hinh.h"
 	"bullet.h"
 
-1714131645 d:\game\thuchanhgame\bullet.h
+1714131870 d:\game\thuchanhgame\bullet.h
 	<cmath>
 	<vector>
 	"player.h"

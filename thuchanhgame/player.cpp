@@ -1,6 +1,7 @@
+
 #include "player.h"
 
-Player::Player(Timer& timer, Maze& maze, Bullet& bullet) : myTimer(timer), mazeG(maze), bullet(bullet) {
+Player::Player(Timer& timer, Maze& maze) : myTimer(timer), mazeG(maze) {
     playerRow = 1;
     playerCol = 1;
     blood = 500;
@@ -74,7 +75,7 @@ void Player::Move() {
                         break;
                     case SDLK_SPACE:
                         // Bắn viên đạn với hướng di chuyển hiện tại của người chơi
-                        if (!bullet.IsActive()) {
+                        if (!bullet.isActive()) {
                             bullet.Shoot(playerRow, playerCol, movedUp, movedDown, movedLeft, movedRight);
                         }
                         break;
@@ -107,7 +108,6 @@ void Player::Move() {
 
     // Vẽ lại mê cung sau khi di chuyển người chơi
     RenderMaze();
-    renderBullet();
 }
 
 void Player::RenderMaze() {
@@ -290,10 +290,6 @@ if (isReStart()){
     bloodText << "Blood: " << blood;
     renderText(renderer, font, bloodText.str().c_str(), 850, 200, textColor);
 
-    std::stringstream bulletText;
-    bulletText << "Bullet: " << bullet.GetBulletCount();
-    renderText(renderer, font, bulletText.str().c_str(), 850, 600, textColor);
-
     std::stringstream scoreText;
     scoreText << "Score: " << score;
     renderText(renderer, font, scoreText.str().c_str(), 850, 300, textColor);
@@ -385,7 +381,7 @@ void Player::Moveup() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 5 + 1;
+                int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -393,8 +389,6 @@ void Player::Moveup() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
-                } else if (hidden == 4) {
-                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -438,7 +432,7 @@ void Player::Movedown() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 5 + 1;
+                int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -446,8 +440,6 @@ void Player::Movedown() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
-                } else if (hidden == 4) {
-                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -487,7 +479,7 @@ void Player::Moveleft() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 5 + 1;
+                int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -495,8 +487,6 @@ void Player::Moveleft() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
-                } else if (hidden == 4) {
-                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -537,7 +527,7 @@ void Player::Moveright() {
                 score += randomScore; // Tăng điểm
             } else if (nextCell == 3) { // Nếu ô tiếp theo là ô ẩn
                 hiddenCount++;
-                int hidden = rand() % 5 + 1;
+                int hidden = rand() % 4 + 1;
                 if (hidden == 1) {
                     score++;
                 } else if (hidden == 2) {
@@ -545,8 +535,6 @@ void Player::Moveright() {
                 } else if (hidden == 3) {
                     int mau = (rand() % 10 + 1) * 10;
                     blood -= mau;
-                } else if (hidden == 4) {
-                    bullet.plusBulletCount();
                 } else {
                     if (blood <= 450 && blood > 0) {
                         blood += 50;
@@ -585,92 +573,21 @@ void Player::restartGame() {
 
  // Vẽ viên đạn lên màn hình
 void Player::renderBullet() {
-    if (bullet.IsActive()) {
-        int widthl = 800; // Kích thước màn hình là 1200x800
-        int heightl = 800;
-        int MAZE_SIZE = 100; // Kích thước mê cung
-
-        // Kiểm tra xem người chơi có nằm trong phạm vi màn hình hiển thị không
-        if (playerRow <= 20 || playerCol <= 20 || playerRow >= MAZE_SIZE - 20 || playerCol >= MAZE_SIZE - 20) {
-            // Tính toán vị trí camera để người chơi luôn ở giữa màn hình
-            int cameraX = playerCol * CELL_SIZE - (widthl / 2 - CELL_SIZE / 2);
-            int cameraY = playerRow * CELL_SIZE - (heightl / 2 - CELL_SIZE / 2);
-
-            // Kiểm tra nếu camera vượt ra ngoài màn hình
-            if (cameraX < 0) cameraX = 0;
-            if (cameraY < 0) cameraY = 0;
-            int maxCameraX = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
-            int maxCameraY = (MAZE_SIZE - VIEW_SIZE) * CELL_SIZE;
-            if (cameraX > maxCameraX) cameraX = maxCameraX;
-            if (cameraY > maxCameraY) cameraY = maxCameraY;
-
-            // Vẽ toàn bộ mê cung và người chơi ở vị trí hiện tại
-            for (int i = 0; i < MAZE_SIZE; i++) {
-                for (int j = 0; j < MAZE_SIZE; j++) {
-                    int x = j * CELL_SIZE - cameraX;
-                    int y = i * CELL_SIZE - cameraY;
-                    // Kiểm tra xem ô có nằm trong màn hình không
-                    if (x >= -CELL_SIZE && x <= widthl && y >= -CELL_SIZE && y <= heightl) {
-                        if (i == bullet.GetRow() && j == bullet.GetCol()){
-                            // Vẽ viên đạn lên màn hình
-                            SDL_Rect bulletRect;
-                            if (hasMovedDown() || hasMovedUp()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
-                                bulletRect = { x + 5, y, 5, 10 };
-                            } else if (hasMovedLeft() || hasMovedRight()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
-                                bulletRect = { x, y + 5, 10, 5 };
-                            }
-                            SDL_RenderFillRect(renderer, &bulletRect);
-                        }
-                    }
-                }
-            }
-        } else {
-            // Tính toán vị trí của người chơi trong mê cung
-            int playerX = playerCol * CELL_SIZE;
-            int playerY = playerRow * CELL_SIZE;
-
-            // Tính toán vị trí của camera để người chơi luôn ở trung tâm màn hình
-            int cameraX = playerX - widthl / 2;
-            int cameraY = playerY - heightl / 2;
-
-            // Clamp camera position to stay within maze boundaries
-            cameraX = std::max(0, std::min(cameraX, (MAZE_SIZE * CELL_SIZE) - widthl));
-            cameraY = std::max(0, std::min(cameraY, (MAZE_SIZE * CELL_SIZE) - heightl));
-
-            // Vẽ chỉ phần màn hình nhỏ xung quanh người chơi
-            for (int i = 0; i < heightl / CELL_SIZE; i++) {
-                for (int j = 0; j < widthl / CELL_SIZE; j++) {
-                    // Calculate maze coordinates with camera offset
-                    int mazeX = (cameraX + j * CELL_SIZE) / CELL_SIZE;
-                    int mazeY = (cameraY + i * CELL_SIZE) / CELL_SIZE;
-
-                    // Calculate screen coordinates with camera offset
-                    int x = j * CELL_SIZE - (cameraX % CELL_SIZE);
-                    int y = i * CELL_SIZE - (cameraY % CELL_SIZE);
-
-                    // Kiểm tra xem ô có nằm trong mê cung không
-                    if (mazeX >= 0 && mazeX < MAZE_SIZE && mazeY >= 0 && mazeY < MAZE_SIZE) {
-                        if (mazeX == bullet.GetCol() && mazeY == bullet.GetRow()){
-                            // Vẽ viên đạn lên màn hình
-                            SDL_Rect bulletRect;
-                            if (hasMovedDown() || hasMovedUp()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
-                                bulletRect = { x + 5, y, 5, 10 };
-                            } else if (hasMovedLeft() || hasMovedRight()) {
-                                SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
-                                bulletRect = { x, y + 5, 10, 5 };
-                            }
-                            SDL_RenderFillRect(renderer, &bulletRect);
-                        }
-                    }
-                }
-            }
+    if (bullet.isActive()) {
+        // Lấy vị trí của viên đạn
+        int bulletX = bullet.getCol() * CELL_SIZE;
+        int bulletY = bullet.getRow() * CELL_SIZE;
+        if (hasMovedDown() || hasMovedUp()){
+            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+            SDL_Rect bulletRect = { bulletX + 5, bulletY, 5, 10 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
+            SDL_RenderFillRect(renderer, &bulletRect);
+        } else if(hasMovedLeft() || hasMovedRight()){
+            SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu hồng
+            SDL_Rect bulletRect = { bulletX , bulletY + 5, 10, 5 }; // Thay thế BULLET_WIDTH và BULLET_HEIGHT bằng kích thước thực của viên đạn
+            SDL_RenderFillRect(renderer, &bulletRect);
         }
     }
 }
-
 
 void Player::AskForContinue() {
     SDL_RenderClear(renderer);

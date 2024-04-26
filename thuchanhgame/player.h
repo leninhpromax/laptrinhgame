@@ -1,3 +1,4 @@
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -49,7 +50,7 @@ private:
     SDL_Texture* target4;
 
 public:
-    Player(Timer& timer, Maze& maze, Bullet& bullet); // Constructor với Timer và Maze
+    Player(Timer& timer, Maze& maze); // Constructor với Timer và Maze
     void StartGame();
     void Move();
     std::vector<std::vector<int>>& mazek(); // Sửa tên hàm mazek()

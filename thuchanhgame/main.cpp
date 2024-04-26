@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -112,8 +113,7 @@ int main(int argc, char* argv[]) {
     // Khởi tạo Timer và Maze
     Timer myTimer;
     Maze mazeG;
-    Bullet bullet;
-    Player playerG(myTimer, mazeG, bullet);
+    Player playerG(myTimer, mazeG);
     playerG.setRenderer(renderer);
     playerG.setFont(font);
     playerG.setFont1(font1);
@@ -155,6 +155,7 @@ if (!kt){
     playerG.RenderMaze();
     // Di chuyển người chơi
     playerG.Move();
+    playerG.renderBullet();
 
     // Hiển thị renderer
     SDL_RenderPresent(renderer);
