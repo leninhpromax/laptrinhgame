@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1714059799 source:d:\game\thuchanhgame\main.cpp
+1714118376 source:d:\game\thuchanhgame\main.cpp
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -10,7 +10,7 @@
 	"player.h"
 	"boss.h"
 
-1713437867 d:\game\thuchanhgame\code_me_cung.h
+1714095890 d:\game\thuchanhgame\code_me_cung.h
 	<chrono>
 	<algorithm>
 	<random>
@@ -20,7 +20,7 @@
 	<ctime>
 	<cstdlib>
 
-1713521832 source:d:\game\thuchanhgame\code_me_cung.cpp
+1714095890 source:d:\game\thuchanhgame\code_me_cung.cpp
 	<chrono>
 	<algorithm>
 	<random>
@@ -31,7 +31,7 @@
 	<SDL_image.h>
 	"code_me_cung.h"
 
-1714057297 d:\game\thuchanhgame\man_hinh.h
+1714116229 d:\game\thuchanhgame\man_hinh.h
 	<vector>
 	<tuple>
 	<SDL.h>
@@ -39,7 +39,7 @@
 	<SDL_ttf.h>
 	<iostream>
 
-1714057249 source:d:\game\thuchanhgame\man_hinh.cpp
+1714116229 source:d:\game\thuchanhgame\man_hinh.cpp
 	"man_hinh.h"
 
 1710511854 c:\users\windows 11\downloads\sdl2-devel-2.30.1-mingw\sdl2-2.30.1\i686-w64-mingw32\include\sdl2\sdl.h
@@ -853,10 +853,10 @@
 	<string>
 	<SDL.h>
 
-1714059380 source:d:\game\thuchanhgame\player.cpp
+1714118540 source:d:\game\thuchanhgame\player.cpp
 	"player.h"
 
-1714060281 d:\game\thuchanhgame\player.h
+1714118827 d:\game\thuchanhgame\player.h
 	<iostream>
 	<vector>
 	<SDL.h>
@@ -867,9 +867,8 @@
 	"code_me_cung.h"
 	"man_hinh.h"
 	"bullet.h"
-	"boss.h"
 
-1713958596 d:\game\thuchanhgame\bullet.h
+1714099499 d:\game\thuchanhgame\bullet.h
 	<cmath>
 	<vector>
 	"player.h"

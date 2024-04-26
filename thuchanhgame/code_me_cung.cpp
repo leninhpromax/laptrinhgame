@@ -23,7 +23,6 @@ void Maze::Create() {
 }
 
 // Tạo tường ngẫu nhiên trong mê cung
-// Tạo tường ngẫu nhiên trong mê cung
 void Maze::GenerateRandomWalls() {
     std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
     // Khởi tạo bộ tạo số ngẫu nhiên Mersenne Twister

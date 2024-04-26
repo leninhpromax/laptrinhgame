@@ -4,7 +4,7 @@
 SDL_Color textColor = { 255, 255, 255 };
 
 // Màu chữ đỏ
-SDL_Color redColor = { 255, 0, 0 };
+SDL_Color redColor =  {0, 255, 0};
 
 // Màu chữ xanh
 SDL_Color blueColor = { 0, 0, 255 };

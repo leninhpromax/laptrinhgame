@@ -11,7 +11,6 @@
 #include "code_me_cung.h"
 #include "man_hinh.h"
 #include "bullet.h"
-#include "boss.h"
 
 const int VIEW_SIZE = 40; // Kích thước màn hình 40x40 ô
 const int CELL_SIZE = 20; // Kích thước của mỗi ô
@@ -24,13 +23,16 @@ private:
     int score;
     int breakCount;
     int hiddenCount;
+    int run;
+    bool win;
     bool gameFinished;
+    bool restart;
     bool gameQuit;
     bool movedUp;
     bool movedDown;
     bool movedLeft;
     bool movedRight;
-    bool restart;
+    bool newgame;
     Timer myTimer;
     Maze mazeG;
     Bullet bullet;
@@ -38,11 +40,13 @@ private:
     TTF_Font* font;
     TTF_Font* font1;
     SDL_Renderer* renderer;
+    SDL_Texture* background;
+    SDL_Texture* background2;
     SDL_Texture* player;
     SDL_Texture* target;
     SDL_Texture* target2;
-    SDL_Texture* playerLeft;
-    SDL_Texture* playerRight;
+    SDL_Texture* target3;
+    SDL_Texture* target4;
 
 public:
     Player(Timer& timer, Maze& maze); // Constructor với Timer và Maze
@@ -81,6 +85,22 @@ public:
         return restart;
     }
 
+    bool isWin() {
+        return win;
+    }
+
+    bool isNewGame() {
+        return newgame;
+    }
+
+    void setNewgame(bool ng) {
+        newgame = ng;
+    }
+
+    void setWin(bool w) {
+        win = w;
+    }
+
     void setReStart(bool reS) {
         restart = reS;
     }
@@ -104,6 +124,15 @@ public:
         font1 = f1;
     }
 
+    void setBackground(SDL_Texture* bg) {
+        background = bg;
+    }
+
+    void setBackground2(SDL_Texture* bg2) {
+        background2 = bg2;
+    }
+
+
     void setPlayer(SDL_Texture* p) {
         player = p;
     }
@@ -116,13 +145,14 @@ public:
         target2 = t2;
     }
 
-    void setplayerLeft(SDL_Texture* pl) {
-        playerLeft = pl;
+    void setTarget3(SDL_Texture* t3) {
+        target3 = t3;
     }
 
-    void setplayerRight(SDL_Texture* pr) {
-        playerRight = pr;
+    void setTarget4(SDL_Texture* t4) {
+        target4 = t4;
     }
+
 
     int& Replace(int row, int col);
     void RenderMaze();
@@ -133,11 +163,11 @@ public:
     void Moveright();
     void restartGame();
     void renderBullet();
+    void AskForContinue();
     bool hasMovedUp() { return movedUp; }
     bool hasMovedDown() { return movedDown; }
     bool hasMovedLeft() { return movedLeft; }
     bool hasMovedRight() { return movedRight; }
 
 };
-
 #endif

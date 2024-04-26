@@ -20,9 +20,11 @@ public:
 
     // Bắn viên đạn từ vị trí (startRow, startCol) dựa trên hướng di chuyển của người chơi
     void Shoot(int startRow, int startCol, bool playerMovedUp, bool playerMovedDown, bool playerMovedLeft, bool playerMovedRight) {
-                 row = startRow;
-                 col = startCol;
-         // Xác định góc bắn dựa trên hướng di chuyển của người chơi
+        row = startRow;
+        col = startCol;
+        this->startRow = startRow;
+        this->startCol = startCol;
+        // Xác định góc bắn dựa trên hướng di chuyển của người chơi
         if (playerMovedUp) {
             angle = -M_PI / 2; // Bắn lên trên
         } else if (playerMovedDown) {
@@ -39,9 +41,11 @@ public:
     // Di chuyển viên đạn theo góc đã bắn
     void Move(std::vector<std::vector<int>>& maze) {
         if (active) {
+            float bulletSpeed = 1.0f; // Tốc độ của viên đạn
+
             // Tính toán vị trí mới dựa trên góc bắn
-            float deltaX = cos(angle); // Thay đổi theo hướng x (cột)
-            float deltaY = sin(angle); // Thay đổi theo hướng y (hàng)
+            float deltaX = bulletSpeed * cos(angle); // Thay đổi theo hướng x (cột)
+            float deltaY = bulletSpeed * sin(angle); // Thay đổi theo hướng y (hàng)
 
             // Tính toán vị trí mới của đạn
             float newX = col + deltaX;
