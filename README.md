@@ -1,4 +1,4 @@
-cách tải game tải game tại link [text](<../game (4).zip>)
+cách tải game tải game tại link https://drive.google.com/drive/u/0/folders/17AnR_VrDLFIWYxgkeywS2zZDdmliBWtg
  hoặc ó thể tải trự ctieeps tại đường link này https://github.com/leninhpromax/laptrinhgame
  ![image](https://github.com/leninhpromax/laptrinhgame/assets/90245106/20ef1fac-99a6-485c-94b2-4c5d2f212ab9)
 
